@@ -25,7 +25,7 @@ void test_driver_wdt_watchdog() {
     volatile uint8_t wdtctl_0_original = (uint8_t) WDTCTL;
     volatile uint8_t  wdtctl_0_current;
 
-    __WDT_hold();
+    WDT_hold();
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -33,7 +33,7 @@ void test_driver_wdt_watchdog() {
         test_fail();
     }
 
-    __WDT_start();
+    WDT_start();
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -41,7 +41,7 @@ void test_driver_wdt_watchdog() {
         test_fail();
     }
 
-    __WDT_clr();
+    WDT_clr();
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -49,7 +49,7 @@ void test_driver_wdt_watchdog() {
         test_fail();
     }
 
-    __WDT_ssel(__TEST_SSEL__);
+    WDT_ssel(__TEST_SSEL__);
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -57,7 +57,7 @@ void test_driver_wdt_watchdog() {
         test_fail();
     }
 
-    __WDT_clr_interval(__TEST_INTERVAL__);
+    WDT_clr_interval(__TEST_INTERVAL__);
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -66,7 +66,7 @@ void test_driver_wdt_watchdog() {
         test_fail();
     }
 
-    __WDT_clr_ssel_interval(__TEST_DEFAULT_SSEL__, __TEST_DEFAULT_INTERVAL__);
+    WDT_clr_ssel_interval(__TEST_DEFAULT_SSEL__, __TEST_DEFAULT_INTERVAL__);
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -75,7 +75,7 @@ void test_driver_wdt_watchdog() {
         test_fail();
     }
 
-    __WDT_hold();
+    WDT_hold();
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -84,7 +84,7 @@ void test_driver_wdt_watchdog() {
         test_fail();
     }
 
-    __WDT_clr_ssel_interval(__TEST_SSEL__, __TEST_INTERVAL__);
+    WDT_clr_ssel_interval(__TEST_SSEL__, __TEST_INTERVAL__);
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -95,10 +95,10 @@ void test_driver_wdt_watchdog() {
 
     // --- pause / restore ---
 
-    __WDT_start();
+    WDT_start();
 
     {
-        __WDT_backup_hold();
+        WDT_backup_hold();
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -107,7 +107,7 @@ void test_driver_wdt_watchdog() {
             test_fail();
         }
 
-        __WDT_restore();
+        WDT_restore();
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -119,10 +119,10 @@ void test_driver_wdt_watchdog() {
 
     // --- pause / restore when not started ---
 
-    __WDT_hold();
+    WDT_hold();
 
     {
-         __WDT_backup_hold();
+         WDT_backup_hold();
 
          wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -131,7 +131,7 @@ void test_driver_wdt_watchdog() {
              test_fail();
          }
 
-         __WDT_restore();
+         WDT_restore();
 
          wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -143,10 +143,10 @@ void test_driver_wdt_watchdog() {
 
     // --- pause / change state / restore ---
 
-    __WDT_start();
+    WDT_start();
 
     {
-        __WDT_backup_clr_interval(__TEST_DEFAULT_INTERVAL__);
+        WDT_backup_clr_interval(__TEST_DEFAULT_INTERVAL__);
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -155,7 +155,7 @@ void test_driver_wdt_watchdog() {
             test_fail();
         }
 
-        __WDT_clr_restore();
+        WDT_clr_restore();
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -167,10 +167,10 @@ void test_driver_wdt_watchdog() {
 
     // --- pause / change state / restore when not started ---
 
-    __WDT_hold();
+    WDT_hold();
 
     {
-        __WDT_backup_clr_ssel_interval(__TEST_DEFAULT_SSEL__, __TEST_DEFAULT_INTERVAL__);
+        WDT_backup_clr_ssel_interval(__TEST_DEFAULT_SSEL__, __TEST_DEFAULT_INTERVAL__);
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -179,7 +179,7 @@ void test_driver_wdt_watchdog() {
             test_fail();
         }
 
-        __WDT_clr_restore();
+        WDT_clr_restore();
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
@@ -189,7 +189,7 @@ void test_driver_wdt_watchdog() {
         }
     }
 
-    __WDT_clr_ssel_interval(__TEST_SSEL__, __TEST_INTERVAL__);
+    WDT_clr_ssel_interval(__TEST_SSEL__, __TEST_INTERVAL__);
 
     expect_reset();
 }

@@ -4,23 +4,23 @@ cmake_minimum_required(VERSION 3.2)
 
 project(PrimerOS-test-project VERSION 0.1 LANGUAGES C)
 
-if (NOT MSP_MCU)
-    set(MSP_MCU MSP430FR5994)
+if (NOT TARGET_MCU)
+    set(TARGET_MCU MSP430FR5994)
 endif()
 
 set(DEFINITIONS
-        __${MSP_MCU}__
+        __${TARGET_MCU}__
         __RESOURCE_MANAGEMENT_ENABLE__)
 
 add_executable(PrimerOS-test-project
         src/runner.c
         src/common.c
+        src/driver/wdt/disabled.c
+        src/driver/wdt/watchdog.c
+        src/driver/wdt/interval.c
         src/driver/disposable/chain.c
         src/driver/disposable/resource.c
-        src/driver/vector/trigger.c
-        src/driver/wdt/disabled.c
-        src/driver/wdt/interval.c
-        src/driver/wdt/watchdog.c)
+        src/driver/vector/trigger.c)
 
 target_include_directories(PrimerOS-test-project
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>

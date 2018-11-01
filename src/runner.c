@@ -4,11 +4,8 @@
 
 // -------------------------------------------------------------------------------------
 
-#pragma PERSISTENT(last_executed_test_id)
-uint16_t last_executed_test_id = 0;
-
-#pragma PERSISTENT(last_passed_test_id)
-uint16_t last_passed_test_id = 0;
+volatile uint16_t last_executed_test_id __attribute__ ((persistent)) = 0;
+volatile uint16_t last_passed_test_id __attribute__ ((persistent))  = 0;
 
 // -------------------------------------------------------------------------------------
 
@@ -20,6 +17,7 @@ void (*tests_all[TEST_CNT])(void) = {
     test_driver_wdt_interval,
     test_driver_disposable_chain,
     test_driver_disposable_resource,
+    test_driver_vector_trigger,
 };
 
 // -------------------------------------------------------------------------------------
@@ -38,13 +36,13 @@ void test_runner_all() {
     if (last_executed_test_id == TEST_CNT) {
         last_executed_test_id = last_passed_test_id = 0;
 
-        WDT_hold();
+        WDT_disable();
         default_clock_setup();
         IO_unlock();
         IO_red_led_off();
 
-        for (i = 10; i > 0; i--) {
-            for (j = 2500; j > 0; j--);
+        for (i = 2; i > 0; i--) {
+            for (j = 25000; j > 0; j--);
 
             IO_green_led_toggle();
         }

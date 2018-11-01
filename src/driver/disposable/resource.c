@@ -7,11 +7,11 @@
 
 // -------------------------------------------------------------------------------------
 
-static dispose_function_t _test_dispose_hook_1(Disposable_t *);
+static dispose_function_t test_dispose_hook(Disposable_t *);
 
-Disposable_t r1, r2, r3, r4, r5;
-Process_control_block_t pcb;
-bool dispose_hook_1_called;
+static Disposable_t r1, r2, r3, r4, r5;
+static Process_control_block_t pcb;
+static bool dispose_hook_called;
 
 // -------------------------------------------------------------------------------------
 
@@ -23,14 +23,14 @@ void test_driver_disposable_resource() {
 #ifdef __RESOURCE_MANAGEMENT_ENABLE__
     running_process = &pcb;
 
-    __WDT_hold();
+    WDT_hold();
     default_clock_setup();
 
-    __register_dispose_hook(&r1, _test_dispose_hook_1);
-    __register_dispose_hook(&r2, _test_dispose_hook_1);
-    __register_dispose_hook(&r3, _test_dispose_hook_1);
-    __register_dispose_hook(&r4, _test_dispose_hook_1);
-    __register_dispose_hook(&r5, _test_dispose_hook_1);
+    __dispose_hook_register(&r1, test_dispose_hook);
+    __dispose_hook_register(&r2, test_dispose_hook);
+    __dispose_hook_register(&r3, test_dispose_hook);
+    __dispose_hook_register(&r4, test_dispose_hook);
+    __dispose_hook_register(&r5, test_dispose_hook);
 
     disposable = pcb._resource_list;
 
@@ -55,11 +55,11 @@ void test_driver_disposable_resource() {
     }
 
     // --- dispose list head ---
-    dispose_hook_1_called = false;
+    dispose_hook_called = false;
 
     dispose(&r5);
 
-    if ( ! dispose_hook_1_called) {
+    if ( ! dispose_hook_called) {
         test_fail();
     }
 
@@ -74,20 +74,20 @@ void test_driver_disposable_resource() {
     }
 
     // --- dispose resource, that is not on owner list ---
-    dispose_hook_1_called = false;
+    dispose_hook_called = false;
 
     dispose(&r5);
 
-    if (dispose_hook_1_called) {
+    if (dispose_hook_called) {
         test_fail();
     }
 
     // --- dispose list tail ---
-    dispose_hook_1_called = false;
+    dispose_hook_called = false;
 
     dispose(&r1);
 
-    if ( ! dispose_hook_1_called) {
+    if ( ! dispose_hook_called) {
         test_fail();
     }
 
@@ -102,19 +102,19 @@ void test_driver_disposable_resource() {
     }
 
     // --- dispose resource, that is not on owner list ---
-    dispose_hook_1_called = false;
+    dispose_hook_called = false;
 
     dispose(&r1);
 
-    if (dispose_hook_1_called) {
+    if (dispose_hook_called) {
         test_fail();
     }
     // --- dispose list middle resource ---
-    dispose_hook_1_called = false;
+    dispose_hook_called = false;
 
     dispose(&r3);
 
-    if ( ! dispose_hook_1_called) {
+    if ( ! dispose_hook_called) {
         test_fail();
     }
 
@@ -129,33 +129,33 @@ void test_driver_disposable_resource() {
     }
 
     // --- dispose resource, that is not on owner list ---
-    dispose_hook_1_called = false;
+    dispose_hook_called = false;
 
     dispose(&r3);
 
-    if (dispose_hook_1_called) {
+    if (dispose_hook_called) {
         test_fail();
     }
 
     // --- dispose remaining resources ---
     resource_list_expected_length = 2;
 
-    while (disposable = pcb._resource_list) {
-        dispose_hook_1_called = false;
+    while ((disposable = pcb._resource_list)) {
+        dispose_hook_called = false;
 
         dispose(disposable);
 
         resource_list_expected_length--;
 
-        if ( ! dispose_hook_1_called) {
+        if ( ! dispose_hook_called) {
             test_fail();
         }
 
-        dispose_hook_1_called = false;
+        dispose_hook_called = false;
 
         dispose(disposable);
 
-        if (dispose_hook_1_called) {
+        if (dispose_hook_called) {
             test_fail();
         }
 
@@ -175,9 +175,9 @@ void test_driver_disposable_resource() {
 #endif /* __RESOURCE_MANAGEMENT_ENABLE__ */
 }
 
-static dispose_function_t _test_dispose_hook_1(Disposable_t *_) {
+static dispose_function_t test_dispose_hook(Disposable_t *_) {
 
-    dispose_hook_1_called = true;
+    dispose_hook_called = true;
 
     return NULL;
 }

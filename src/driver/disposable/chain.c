@@ -8,14 +8,14 @@
 
 // -------------------------------------------------------------------------------------
 
-static dispose_function_t _test_dispose_hook_1(Disposable_t *disposable);
-static dispose_function_t _test_dispose_hook_2(Disposable_t *disposable);
-static void _test_ISR(void);
+void driver_disposable_chain_test_ISR(void);
+static dispose_function_t test_dispose_hook_1(Disposable_t *disposable);
+static dispose_function_t test_dispose_hook_2(Disposable_t *disposable);
 
-Vector_handle_t h;
-Process_control_block_t pcb;
-bool dispose_hook_1_called;
-bool dispose_hook_2_called;
+static Vector_handle_t h;
+static Process_control_block_t pcb;
+static bool dispose_hook_1_called;
+static bool dispose_hook_2_called;
 
 // -------------------------------------------------------------------------------------
 
@@ -25,15 +25,15 @@ void test_driver_disposable_chain() {
     dispose_hook_1_called = dispose_hook_2_called = false;
     running_process = &pcb;
 
-    __WDT_hold();
+    WDT_hold();
     default_clock_setup();
 
-    vector_handle_register(&h, (dispose_function_t) _test_dispose_hook_1, WDT_VECTOR,
+    vector_handle_register(&h, (dispose_function_t) test_dispose_hook_1, WDT_VECTOR,
                            (uint16_t) &SFRIE1, WDTIE, (uint16_t) &SFRIFG1, WDTIFG);
 
     vector_content_backup = __vector(WDT_VECTOR);
 
-    h.register_handler(&h, (void (*)(void)) _test_ISR, true);
+    h.register_raw_handler(&h, driver_disposable_chain_test_ISR, true);
 
     if (__vector(WDT_VECTOR) == vector_content_backup) {
         test_fail();
@@ -54,7 +54,7 @@ void test_driver_disposable_chain() {
     }
 }
 
-static dispose_function_t _test_dispose_hook_1(Disposable_t *disposable) {
+static dispose_function_t test_dispose_hook_1(Disposable_t *disposable) {
 
     dispose_hook_1_called = true;
 
@@ -62,10 +62,10 @@ static dispose_function_t _test_dispose_hook_1(Disposable_t *disposable) {
         test_fail();
     }
 
-    return (dispose_function_t) _test_dispose_hook_2;
+    return (dispose_function_t) test_dispose_hook_2;
 }
 
-static dispose_function_t _test_dispose_hook_2(Disposable_t *disposable) {
+static dispose_function_t test_dispose_hook_2(Disposable_t *disposable) {
 
     dispose_hook_2_called = true;
 
@@ -78,6 +78,6 @@ static dispose_function_t _test_dispose_hook_2(Disposable_t *disposable) {
 
 // -------------------------------------------------------------------------------------
 
-static __interrupt void _test_ISR() {
+void __attribute__((interrupt, section(".text:_isr"))) driver_disposable_chain_test_ISR() {
     // just for reference
 }

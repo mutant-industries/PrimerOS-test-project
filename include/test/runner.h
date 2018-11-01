@@ -14,6 +14,8 @@
 #include <test/driver/wdt/interval.h>
 #include <test/driver/disposable/chain.h>
 #include <test/driver/disposable/resource.h>
+#include <test/driver/vector/trigger.h>
+
 
 /**
  * Test framework entry point, might also be user as main entry point

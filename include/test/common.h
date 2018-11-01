@@ -19,7 +19,7 @@ void test_pass(void);
 void expect_reset(void);
 void power_on_reset(void);
 
-void WDT_hold(void);
+void WDT_disable(void);
 void default_clock_setup(void);
 
 #endif /* _TEST_COMMON_H_ */

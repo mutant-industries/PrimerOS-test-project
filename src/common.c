@@ -5,14 +5,14 @@
 
 // -------------------------------------------------------------------------------------
 
-extern uint16_t last_passed_test_id;
+extern volatile uint16_t last_passed_test_id;
 
 // -------------------------------------------------------------------------------------
 
 void test_fail() {
     volatile uint32_t i;
 
-    WDT_hold();
+    WDT_disable();
     default_clock_setup();
     IO_unlock();
 
@@ -26,7 +26,7 @@ void test_fail() {
 void test_pass() {
     volatile uint32_t i;
 
-    WDT_hold();
+    WDT_disable();
     default_clock_setup();
     IO_unlock();
 
@@ -38,6 +38,9 @@ void test_pass() {
     IO_green_led_off();
 }
 
+#ifdef __TI_COMPILER_VERSION__
+#pragma FUNCTION_OPTIONS(expect_reset, "-O1")   // with -O2 and more the last_passed_test_id++ is optimized out
+#endif
 void expect_reset(void) {
     volatile uint32_t i;
 
@@ -57,7 +60,7 @@ void expect_reset(void) {
 
 // -------------------------------------------------------------------------------------
 
-void WDT_hold() {
+void WDT_disable() {
     WDTCTL = WDTPW | WDTHOLD | (WDTCTL & (WDTSSEL | WDTTMSEL | WDTIS));
 }
 
@@ -83,7 +86,7 @@ void default_clock_setup() {
     // Keep overshoot transient within specification by setting clk
     // sources to divide by 4
     // Clear the DIVS & DIVM masks (~0x77) and set both fields to 4 divider
-    CSCTL3 = CSCTL3 & (~(0x77)) | DIVS1 | DIVM1;
+    CSCTL3 = (CSCTL3 & (~(0x77))) | DIVS1 | DIVM1;
 
     // Set user's frequency selection for DCO
     CSCTL1 = (dcorsel + dcofsel);
@@ -103,7 +106,7 @@ void default_clock_setup() {
 
     CSCTL2 &= ~(SELM_7);
     CSCTL2 |= clockSource;
-    CSCTL3 = temp & ~(DIVM0 + DIVM1 + DIVM2) | clockSourceDivider;
+    CSCTL3 = (temp & ~(DIVM0 | DIVM1 | DIVM2)) | clockSourceDivider;
 
     // -------------------------------------------------------------------------
     // Set SMCLK = DCO with frequency divider of 1
@@ -117,7 +120,7 @@ void default_clock_setup() {
 
     CSCTL2 &= ~(SELS_7);
     CSCTL2 |= clockSource;
-    CSCTL3 = temp & ~(DIVS0 + DIVS1 + DIVS2) | clockSourceDivider;
+    CSCTL3 = (temp & ~(DIVS0 | DIVS1 | DIVS2)) | clockSourceDivider;
 
     // -------------------------------------------------------------------------
     // Set ACLK = LFMODOSC with frequency divider of 1
@@ -131,7 +134,7 @@ void default_clock_setup() {
 
     CSCTL2 &= ~(SELA_7);
     CSCTL2 |= clockSource;
-    CSCTL3 = temp & ~(DIVS0 + DIVS1 + DIVS2) | clockSourceDivider;
+    CSCTL3 = (temp & ~(DIVS0 | DIVS1 | DIVS2)) | clockSourceDivider;
 
     // Lock CS control register
     CSCTL0_H = 0x00;
