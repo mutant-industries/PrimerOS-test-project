@@ -20,7 +20,9 @@ add_executable(PrimerOS-test-project
         src/driver/wdt/interval.c
         src/driver/disposable/chain.c
         src/driver/disposable/resource.c
-        src/driver/vector/trigger.c)
+        src/driver/vector/trigger.c
+        src/driver/timer/dispose.c
+        src/driver/timer/multiple.c)
 
 target_include_directories(PrimerOS-test-project
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>

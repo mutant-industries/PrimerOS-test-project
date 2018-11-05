@@ -3,7 +3,6 @@
 #include <test/driver/disposable/chain.h>
 #include <driver/disposable.h>
 #include <driver/vector.h>
-#include <driver/wdt.h>
 #include <process.h>
 
 // -------------------------------------------------------------------------------------
@@ -25,7 +24,7 @@ void test_driver_disposable_chain() {
     dispose_hook_1_called = dispose_hook_2_called = false;
     running_process = &pcb;
 
-    WDT_hold();
+    WDT_disable();
     default_clock_setup();
 
     vector_handle_register(&h, (dispose_function_t) test_dispose_hook_1, WDT_VECTOR,

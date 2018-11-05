@@ -2,7 +2,6 @@
 // Copyright (c) 2018-2019 Mutant Industries ltd.
 #include <test/driver/disposable/resource.h>
 #include <driver/disposable.h>
-#include <driver/wdt.h>
 #include <process.h>
 
 // -------------------------------------------------------------------------------------
@@ -23,7 +22,7 @@ void test_driver_disposable_resource() {
 #ifdef __RESOURCE_MANAGEMENT_ENABLE__
     running_process = &pcb;
 
-    WDT_hold();
+    WDT_disable();
     default_clock_setup();
 
     __dispose_hook_register(&r1, test_dispose_hook);

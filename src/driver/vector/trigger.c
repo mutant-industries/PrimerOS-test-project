@@ -3,7 +3,6 @@
 #include <test/driver/vector/trigger.h>
 #include <driver/disposable.h>
 #include <driver/vector.h>
-#include <driver/wdt.h>
 #include <process.h>
 
 // -------------------------------------------------------------------------------------
@@ -22,7 +21,7 @@ void test_driver_vector_trigger() {
     interrupt_handler_call_count = 0;
     running_process = &pcb;
 
-    WDT_hold();
+    WDT_disable();
     default_clock_setup();
 
     vector_handle_register(&h, NULL, COMP_E_VECTOR, (uint16_t) &CEINT, CERDYIE, (uint16_t) &CEINT, CERDYIFG);

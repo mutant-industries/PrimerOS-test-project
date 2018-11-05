@@ -15,6 +15,8 @@
 #include <test/driver/disposable/chain.h>
 #include <test/driver/disposable/resource.h>
 #include <test/driver/vector/trigger.h>
+#include <test/driver/timer/dispose.h>
+#include <test/driver/timer/multiple.h>
 
 
 /**
