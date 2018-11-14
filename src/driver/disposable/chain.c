@@ -77,6 +77,6 @@ static dispose_function_t test_dispose_hook_2(Disposable_t *disposable) {
 
 // -------------------------------------------------------------------------------------
 
-void __attribute__((interrupt, section(".text:_isr"))) driver_disposable_chain_test_ISR() {
+void __interrupt driver_disposable_chain_test_ISR() {
     // just for reference
 }

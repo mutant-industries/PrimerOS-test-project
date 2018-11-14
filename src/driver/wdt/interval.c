@@ -42,7 +42,7 @@ void test_driver_wdt_interval() {
         test_fail();
     }
 
-    WDT_hold();
+    WDT_hold(); __delay_cycles(6);    // hold and make sure IFG is not set next instruction
 
     test_ISR_call_count = 0;
 
@@ -155,7 +155,7 @@ void test_driver_wdt_interval() {
     dispose(&h);
 }
 
-void __attribute__((interrupt, section(".text:_isr"))) driver_wdt_interval_test_ISR() {
+void __interrupt driver_wdt_interval_test_ISR() {
     test_ISR_call_count++;
     // WDT interrupt flag is cleared by hardware
 }

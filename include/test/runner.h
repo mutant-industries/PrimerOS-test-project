@@ -17,11 +17,13 @@
 #include <test/driver/vector/trigger.h>
 #include <test/driver/timer/dispose.h>
 #include <test/driver/timer/multiple.h>
+#include <test/driver/stack/pointer.h>
+#include <test/driver/stack/deferred.h>
 
 
 /**
  * Test framework entry point, might also be user as main entry point
- *  1. runs single test
+ *  1. run single test
  *  2. restart
  *  3. check that previous test did not crash (executed test count == passed test count)
  *  4. run next test
