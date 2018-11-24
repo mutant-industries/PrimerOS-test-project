@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // Copyright (c) 2018-2019 Mutant Industries ltd.
 #include <test/runner.h>
+#include <compiler.h>
 
 // -------------------------------------------------------------------------------------
 
-volatile uint16_t last_executed_test_id __attribute__ ((persistent)) = 0;
-volatile uint16_t last_passed_test_id __attribute__ ((persistent))  = 0;
+volatile __persistent uint16_t last_executed_test_id = 0;
+volatile __persistent uint16_t last_passed_test_id = 0;
 
 // -------------------------------------------------------------------------------------
 
-#define TEST_CNT    10
+#define TEST_CNT    11
 
 void (*tests_all[TEST_CNT])(void) = {
     test_driver_wdt_disabled,
@@ -22,6 +23,7 @@ void (*tests_all[TEST_CNT])(void) = {
     test_driver_timer_multiple,
     test_driver_stack_pointer,
     test_driver_stack_deferred,
+    test_kernel_process_lifecycle,
 };
 
 // -------------------------------------------------------------------------------------

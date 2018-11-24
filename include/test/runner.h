@@ -19,6 +19,7 @@
 #include <test/driver/timer/multiple.h>
 #include <test/driver/stack/pointer.h>
 #include <test/driver/stack/deferred.h>
+#include <test/kernel/process/lifecycle.h>
 
 
 /**

@@ -22,8 +22,8 @@ static void *return_value_test(void);
 
 // -------------------------------------------------------------------------------------
 
-#define _TEST_STACK_SIZE_   0x3E
-uint8_t test_stack[_TEST_STACK_SIZE_] __attribute__ ((aligned (16)));
+#define __TEST_STACK_SIZE__     0x3E
+uint8_t test_stack[__TEST_STACK_SIZE__] __attribute__ ((aligned (16)));
 
 static volatile void *stack_pointer, *backup;
 static volatile bool param_test_called;
@@ -49,7 +49,7 @@ void test_driver_stack_deferred() {
     stack_save_context(&backup);
 
     // --- test deferred stack context init ---
-    deferred_stack_pointer_init(&stack_pointer, test_stack, _TEST_STACK_SIZE_);
+    deferred_stack_pointer_init(&stack_pointer, test_stack, __TEST_STACK_SIZE__);
     deferred_stack_push_return_address(&stack_pointer, return_to_label);
     deferred_stack_context_init(&stack_pointer, param_test, test_param);
 
