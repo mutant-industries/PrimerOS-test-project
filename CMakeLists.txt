@@ -15,7 +15,7 @@ set(DEFINITIONS
 add_executable(PrimerOS-test-project
         src/runner.c
         src/common.c
-        src/driverlib.c
+        src/driver/common.c
         src/driver/wdt/disabled.c
         src/driver/wdt/watchdog.c
         src/driver/wdt/interval.c
@@ -26,7 +26,9 @@ add_executable(PrimerOS-test-project
         src/driver/timer/multiple.c
         src/driver/stack/pointer.c
         src/driver/stack/deferred.c
-        src/kernel/process/lifecycle.c)
+        src/kernel/common.c
+        src/kernel/process/lifecycle.c
+        src/kernel/action/sorting.c)
 
 target_include_directories(PrimerOS-test-project
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>

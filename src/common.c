@@ -10,7 +10,7 @@ extern volatile uint16_t last_passed_test_id;
 // -------------------------------------------------------------------------------------
 
 void test_fail() {
-    volatile uint32_t i;
+    volatile uint16_t i;
 
     WDT_disable();
     default_clock_setup();
@@ -24,7 +24,7 @@ void test_fail() {
 }
 
 void test_pass() {
-    volatile uint32_t i;
+    volatile uint16_t i;
 
     WDT_disable();
     default_clock_setup();
@@ -42,7 +42,7 @@ void test_pass() {
 #pragma FUNCTION_OPTIONS(expect_reset, "-O1")   // with -O2 and more the last_passed_test_id++ is optimized out
 #endif
 void expect_reset(void) {
-    volatile uint32_t i;
+    volatile uint16_t i;
 
     last_passed_test_id++;
 

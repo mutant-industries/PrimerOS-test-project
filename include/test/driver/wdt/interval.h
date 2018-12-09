@@ -3,8 +3,8 @@
 #ifndef _TEST_DRIVER_WDT_INTERVAL_H_
 #define _TEST_DRIVER_WDT_INTERVAL_H_
 
-
 #include <test/common.h>
+#include <test/driver/common.h>
 
 
 void test_driver_wdt_interval(void);

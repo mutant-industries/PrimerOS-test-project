@@ -51,31 +51,25 @@ void test_driver_stack_deferred() {
     // --- test deferred stack context init ---
     deferred_stack_pointer_init(&stack_pointer, test_stack, __TEST_STACK_SIZE__);
     deferred_stack_push_return_address(&stack_pointer, return_to_label);
-    deferred_stack_context_init(&stack_pointer, param_test, test_param);
+    deferred_stack_context_init(&stack_pointer, param_test, test_param, NULL);
 
     stack_restore_context(&stack_pointer);
 
     reti;
 __asm__("return_to_label:");
 
-    if ( ! param_test_called) {
-        test_fail();
-    }
+    assert(param_test_called);
 
     // --- test deferred stack return value set ---
     test_return_value_result = return_value_test();
 
-    if (test_return_value_result != test_return_value) {
-        test_fail();
-    }
+    assert(test_return_value_result == test_return_value);
 
     stack_restore_context(&backup);
 }
 
 static void param_test(void *param) {
-    if (param != test_param) {
-        test_fail();
-    }
+    assert(param == test_param);
 
     param_test_called = true;
 }

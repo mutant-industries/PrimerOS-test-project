@@ -15,8 +15,6 @@
 void driver_wdt_interval_test_ISR(void);
 static volatile uint16_t test_ISR_call_count;
 
-static Vector_handle_t h;
-
 // -------------------------------------------------------------------------------------
 
 void test_driver_wdt_interval() {
@@ -26,11 +24,11 @@ void test_driver_wdt_interval() {
     WDT_hold();
     default_clock_setup();
 
-    vector_handle_register(&h, NULL, WDT_VECTOR, (uint16_t) &SFRIE1, WDTIE, (uint16_t) &SFRIFG1, WDTIFG);
+    vector_handle_register(&vector, NULL, WDT_VECTOR, (uint16_t) &SFRIE1, WDTIE, (uint16_t) &SFRIFG1, WDTIFG);
 
-    h.register_raw_handler(&h, driver_wdt_interval_test_ISR, true);
-    h.clear_interrupt_flag(&h);
-    h.set_enabled(&h, true);
+    vector_register_raw_handler(&vector, driver_wdt_interval_test_ISR, true);
+    vector_clear_interrupt_flag(&vector);
+    vector_set_enabled(&vector, true);
 
     __enable_interrupt();
 
@@ -38,9 +36,7 @@ void test_driver_wdt_interval() {
     // delay cycles does not do exactly what it claims - for __delay_cycles(64) just 40 cycles pass
     __delay_cycles(__TEST_INTERVAL__ * 2);
 
-    if ( ! test_ISR_call_count) {
-        test_fail();
-    }
+    assert(test_ISR_call_count);
 
     WDT_hold(); __delay_cycles(6);    // hold and make sure IFG is not set next instruction
 
@@ -48,9 +44,7 @@ void test_driver_wdt_interval() {
 
     __delay_cycles(__TEST_INTERVAL__ * 2);
 
-    if (test_ISR_call_count) {
-        test_fail();
-    }
+    assert( ! test_ISR_call_count);
 
     // --- pause / restore ---
 
@@ -61,17 +55,13 @@ void test_driver_wdt_interval() {
 
         __delay_cycles(__TEST_INTERVAL__ * 2);
 
-        if (test_ISR_call_count) {
-            test_fail();
-        }
+        assert( ! test_ISR_call_count);
 
         WDT_restore();
 
         __delay_cycles(__TEST_INTERVAL__ * 2);
 
-        if ( ! test_ISR_call_count) {
-            test_fail();
-        }
+        assert(test_ISR_call_count);
     }
 
     WDT_hold(); __delay_cycles(6);    // hold and make sure IFG is not set next instruction
@@ -85,17 +75,13 @@ void test_driver_wdt_interval() {
 
         __delay_cycles(__TEST_INTERVAL__ * 2);
 
-        if (test_ISR_call_count) {
-            test_fail();
-        }
+        assert( ! test_ISR_call_count);
 
         WDT_restore();
 
         __delay_cycles(__TEST_INTERVAL__ * 2);
 
-        if (test_ISR_call_count) {
-            test_fail();
-        }
+        assert( ! test_ISR_call_count);
     }
 
     WDT_hold(); __delay_cycles(6);    // hold and make sure IFG is not set next instruction
@@ -111,9 +97,7 @@ void test_driver_wdt_interval() {
 
         __delay_cycles(__TEST_INTERVAL__ * 2);
 
-        if ( ! test_ISR_call_count) {
-            test_fail();
-        }
+        assert(test_ISR_call_count);
 
         WDT_clr_restore();
 
@@ -121,9 +105,7 @@ void test_driver_wdt_interval() {
 
         __delay_cycles(__TEST_INTERVAL__ * 2);
 
-        if ( ! test_ISR_call_count) {
-            test_fail();
-        }
+        assert(test_ISR_call_count);
     }
 
     WDT_hold(); __delay_cycles(6);    // hold and make sure IFG is not set next instruction
@@ -137,9 +119,7 @@ void test_driver_wdt_interval() {
 
         __delay_cycles(__TEST_INTERVAL__ * 2);
 
-        if ( ! test_ISR_call_count) {
-            test_fail();
-        }
+        assert(test_ISR_call_count);
 
         WDT_clr_restore();
 
@@ -147,12 +127,10 @@ void test_driver_wdt_interval() {
 
         __delay_cycles(__TEST_INTERVAL__ * 2);
 
-        if (test_ISR_call_count) {
-            test_fail();
-        }
+        assert( ! test_ISR_call_count);
     }
 
-    dispose(&h);
+    dispose(&vector);
 }
 
 void __interrupt driver_wdt_interval_test_ISR() {

@@ -4,6 +4,7 @@
 #define _TEST_DRIVER_TIMER_DISPOSE_H_
 
 #include <test/common.h>
+#include <test/driver/common.h>
 
 
 void test_driver_timer_dispose(void);

@@ -9,8 +9,6 @@
 
 static void test_handler(Vector_handle_t *);
 
-static Vector_handle_t h;
-static Process_control_block_t pcb;
 static uint8_t interrupt_handler_call_count;
 
 // -------------------------------------------------------------------------------------
@@ -19,109 +17,71 @@ void test_driver_vector_trigger() {
     uint16_t vector_content_backup;
 
     interrupt_handler_call_count = 0;
-    running_process = &pcb;
 
     WDT_disable();
     default_clock_setup();
 
-    vector_handle_register(&h, NULL, COMP_E_VECTOR, (uint16_t) &CEINT, CERDYIE, (uint16_t) &CEINT, CERDYIFG);
+    vector_handle_register(&vector, NULL, COMP_E_VECTOR, (uint16_t) &CEINT, CERDYIE, (uint16_t) &CEINT, CERDYIFG);
 
     vector_content_backup = __vector(COMP_E_VECTOR);
 
     __enable_interrupt();
 
-    if (h.register_handler(&h, (void (*)(void *)) test_handler, &h) == NULL) {
-        test_fail();
-    }
+    assert(vector_register_handler(&vector, test_handler, &vector, NULL));
 
-    if (vector_content_backup == __vector(COMP_E_VECTOR)) {
-        test_fail();
-    }
-
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert_not(vector_content_backup == __vector(COMP_E_VECTOR));
+    assert( ! interrupt_handler_call_count);
 
     // --- trigger enabled ---
-    h.set_enabled(&h, true);
+    vector_set_enabled(&vector, true);
 
-    if (h.trigger(&h)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&vector));
 
-    if (interrupt_handler_call_count != 1) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 1);
 
-    if (h.trigger(&h)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&vector));
 
-    if (interrupt_handler_call_count != 2) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 2);
 
     interrupt_handler_call_count = 0;
 
     // --- trigger disabled ---
-    h.set_enabled(&h, false);
+    vector_set_enabled(&vector, false);
 
-    if (h.trigger(&h)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&vector));
 
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (h.trigger(&h)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&vector));
 
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
     // --- should trigger on enable ---
-    h.set_enabled(&h, true);
+    vector_set_enabled(&vector, true);
 
-    if (interrupt_handler_call_count != 1) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 1);
 
-    if (h.trigger(&h)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&vector));
 
-    if (interrupt_handler_call_count != 2) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 2);
 
     interrupt_handler_call_count = 0;
 
     // --- dispose test ---
-    dispose(&h);
+    dispose(&vector);
 
-    if ( ! h.trigger(&h)) {
-        test_fail();
-    }
+    assert(vector_trigger(&vector));
 
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (vector_content_backup != __vector(COMP_E_VECTOR)) {
-        test_fail();
-    }
+    assert(vector_content_backup == __vector(COMP_E_VECTOR));
 }
 
 void test_handler(Vector_handle_t *handle) {
 
-    if (handle != &h) {
-        test_fail();
-    }
+    assert(handle == &vector);
 
     interrupt_handler_call_count++;
 
-    handle->clear_interrupt_flag(handle);
+    vector_clear_interrupt_flag(handle);
 }

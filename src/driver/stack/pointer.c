@@ -25,9 +25,7 @@ void test_driver_stack_pointer() {
     // --- test 16-bit read, backup shall be restored when test finished ---
     stack_pointer_get(&backup);
 
-    if (backup != __SP__) {
-        test_fail();
-    }
+    assert(backup == __SP__);
 
     // --- test 16-bit read / write ---
     test_set = (void *) 0xAAAA;
@@ -38,13 +36,8 @@ void test_driver_stack_pointer() {
 
     stack_pointer_get(&test_get);
 
-    if (test_set != __SP__) {
-        test_fail();
-    }
-
-    if (test_get != __SP__) {
-        test_fail();
-    }
+    assert(test_set == __SP__);
+    assert(test_get == __SP__);
 
 #if defined(_DATA_MODEL_LARGE_) && ! (defined(_TI_COMPILER_) && defined(__STACK_POINTER_20_BIT_SUPPORT_DISABLE__))
     // --- test 20-bit read / write ---
@@ -56,13 +49,8 @@ void test_driver_stack_pointer() {
 
     stack_pointer_get(&test_get);
 
-    if (test_set != __SP__) {
-        test_fail();
-    }
-
-    if (test_get != __SP__) {
-        test_fail();
-    }
+    assert(test_set == __SP__);
+    assert(test_get == __SP__);
 
 #endif
 

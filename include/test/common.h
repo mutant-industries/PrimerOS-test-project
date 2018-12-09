@@ -14,6 +14,9 @@
 #include <test/debug.h>
 
 
+#define assert(condition) if ( ! (condition)) test_fail()
+#define assert_not(condition) if (condition) test_fail()
+
 void test_fail(void);
 void test_pass(void);
 void expect_reset(void);

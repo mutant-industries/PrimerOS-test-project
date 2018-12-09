@@ -29,69 +29,53 @@ void test_driver_wdt_watchdog() {
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
-    if (wdtctl_0_current != (wdtctl_0_original | WDTHOLD)) {
-        test_fail();
-    }
+    assert(wdtctl_0_current == (wdtctl_0_original | WDTHOLD));
 
     WDT_start();
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
-    if (wdtctl_0_current != (wdtctl_0_original & ~WDTHOLD)) {
-        test_fail();
-    }
+    assert(wdtctl_0_current == (wdtctl_0_original & ~WDTHOLD));
 
     WDT_clr();
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
-    if (wdtctl_0_current != (wdtctl_0_original & ~WDTHOLD)) {
-        test_fail();
-    }
+    assert(wdtctl_0_current == (wdtctl_0_original & ~WDTHOLD));
 
     WDT_ssel(__TEST_SSEL__);
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
-    if (wdtctl_0_current != ((wdtctl_0_original & ~WDTHOLD  & ~WDTSSEL) | expand_ssel(__TEST_SSEL__))) {
-        test_fail();
-    }
+    assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTHOLD  & ~WDTSSEL) | expand_ssel(__TEST_SSEL__)));
 
     WDT_clr_interval(__TEST_INTERVAL__);
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
-    if (wdtctl_0_current != ((wdtctl_0_original & ~WDTHOLD  & ~WDTSSEL & ~WDTIS)
-            | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__))) {
-        test_fail();
-    }
+    assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTHOLD  & ~WDTSSEL & ~WDTIS)
+            | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__)));
 
     WDT_clr_ssel_interval(__TEST_DEFAULT_SSEL__, __TEST_DEFAULT_INTERVAL__);
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
-    if (wdtctl_0_current != ((wdtctl_0_original & ~WDTHOLD  & ~WDTSSEL & ~WDTIS)
-            | expand_ssel(__TEST_DEFAULT_SSEL__) | expand_interval(__TEST_DEFAULT_INTERVAL__))) {
-        test_fail();
-    }
+    assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTHOLD  & ~WDTSSEL & ~WDTIS)
+            | expand_ssel(__TEST_DEFAULT_SSEL__) | expand_interval(__TEST_DEFAULT_INTERVAL__)));
 
     WDT_hold();
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
-    if (wdtctl_0_current != ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
-            | expand_ssel(__TEST_DEFAULT_SSEL__) | expand_interval(__TEST_DEFAULT_INTERVAL__))) {
-        test_fail();
-    }
+    assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
+            | expand_ssel(__TEST_DEFAULT_SSEL__) | expand_interval(__TEST_DEFAULT_INTERVAL__)));
 
     WDT_clr_ssel_interval(__TEST_SSEL__, __TEST_INTERVAL__);
 
     wdtctl_0_current = (uint8_t) WDTCTL;
 
-    if (wdtctl_0_current != ((wdtctl_0_original & ~WDTHOLD  & ~WDTSSEL & ~WDTIS)
-            | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__))) {
-        test_fail();
-    }
+    assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTHOLD  & ~WDTSSEL & ~WDTIS)
+            | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__)));
 
     // --- pause / restore ---
 
@@ -102,19 +86,15 @@ void test_driver_wdt_watchdog() {
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
-        if (wdtctl_0_current != ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
-                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__))) {
-            test_fail();
-        }
+        assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
+                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__)));
 
         WDT_restore();
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
-        if (wdtctl_0_current != ((wdtctl_0_original & ~WDTHOLD & ~WDTSSEL & ~WDTIS)
-                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__))) {
-            test_fail();
-        }
+        assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTHOLD & ~WDTSSEL & ~WDTIS)
+                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__)));
     }
 
     // --- pause / restore when not started ---
@@ -126,19 +106,15 @@ void test_driver_wdt_watchdog() {
 
          wdtctl_0_current = (uint8_t) WDTCTL;
 
-         if (wdtctl_0_current != ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
-                 | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__))) {
-             test_fail();
-         }
+        assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
+                 | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__)));
 
          WDT_restore();
 
          wdtctl_0_current = (uint8_t) WDTCTL;
 
-         if (wdtctl_0_current != ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
-                 | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__))) {
-             test_fail();
-         }
+        assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
+                 | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__)));
      }
 
     // --- pause / change state / restore ---
@@ -150,19 +126,15 @@ void test_driver_wdt_watchdog() {
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
-        if (wdtctl_0_current != ((wdtctl_0_original & ~WDTHOLD & ~WDTSSEL & ~WDTIS)
-                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_DEFAULT_INTERVAL__))) {
-            test_fail();
-        }
+        assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTHOLD & ~WDTSSEL & ~WDTIS)
+                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_DEFAULT_INTERVAL__)));
 
         WDT_clr_restore();
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
-        if (wdtctl_0_current != ((wdtctl_0_original & ~WDTHOLD & ~WDTSSEL & ~WDTIS)
-                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__))) {
-            test_fail();
-        }
+        assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTHOLD & ~WDTSSEL & ~WDTIS)
+                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__)));
     }
 
     // --- pause / change state / restore when not started ---
@@ -174,19 +146,15 @@ void test_driver_wdt_watchdog() {
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
-        if (wdtctl_0_current != ((wdtctl_0_original & ~WDTHOLD & ~WDTSSEL & ~WDTIS)
-                | expand_ssel(__TEST_DEFAULT_SSEL__) | expand_interval(__TEST_DEFAULT_INTERVAL__))) {
-            test_fail();
-        }
+        assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTHOLD & ~WDTSSEL & ~WDTIS)
+                | expand_ssel(__TEST_DEFAULT_SSEL__) | expand_interval(__TEST_DEFAULT_INTERVAL__)));
 
         WDT_clr_restore();
 
         wdtctl_0_current = (uint8_t) WDTCTL;
 
-        if (wdtctl_0_current != ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
-                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__))) {
-            test_fail();
-        }
+        assert(wdtctl_0_current == ((wdtctl_0_original & ~WDTSSEL & ~WDTIS) | WDTHOLD
+                | expand_ssel(__TEST_SSEL__) | expand_interval(__TEST_INTERVAL__)));
     }
 
     WDT_clr_ssel_interval(__TEST_SSEL__, __TEST_INTERVAL__);

@@ -3,7 +3,6 @@
 #ifndef _TEST_DRIVER_WDT_DISABLED_H_
 #define _TEST_DRIVER_WDT_DISABLED_H_
 
-
 #include <test/common.h>
 
 

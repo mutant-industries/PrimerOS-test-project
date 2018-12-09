@@ -4,6 +4,7 @@
 #define _TEST_DRIVER_DISPOSABLE_CHAIN_H_
 
 #include <test/common.h>
+#include <test/driver/common.h>
 
 
 void test_driver_disposable_chain(void);

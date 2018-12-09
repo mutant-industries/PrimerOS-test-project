@@ -7,20 +7,11 @@
 
 #define __INIT_PROCESS_PRIORITY__   1
 #define __TEST_PROCESS_PRIORITY__   0
-#define __TEST_STACK_SIZE__         0x6E
 
 // -------------------------------------------------------------------------------------
 
-static int16_t test_process_entry_point(void *);
-static void test_process_exit_hook(int16_t);
-
-static Timer_driver_t driver;
-static Timer_channel_handle_us_convertible_t context_switch_handle;
-
-static Process_control_block_t init_process, test_process;
-static Process_create_config_t test_process_config;
-
-static uint8_t test_stack[__TEST_STACK_SIZE__];
+static signal_t test_process_entry_point(signal_t);
+static void test_process_exit_action_handler(Action_t *, signal_t);
 
 #ifdef _DATA_MODEL_LARGE_
 static void *test_param = (void *) 0x1A5A5;
@@ -28,95 +19,84 @@ static void *test_param = (void *) 0x1A5A5;
 static void *test_param = (void *) 0xB4B4;
 #endif
 
-static int16_t test_return_value = 0x4B4B;
+static signal_t test_return_value = signal(0x4B4B);
 
 static volatile bool test_process_executed;
-static volatile bool exit_hook_executed;
+static volatile bool exit_action_executed;
 
 // -------------------------------------------------------------------------------------
 
 static void init() {
-    zerofill(&test_process_config);
+    zerofill(&process_1.create_config);
 
-    test_process_config.priority = __TEST_PROCESS_PRIORITY__;
-    test_process_config.stack_addr_low = test_stack;
-    test_process_config.stack_size = __TEST_STACK_SIZE__;
-    test_process_config.entry_point = test_process_entry_point;
-    test_process_config.argument = test_param;
+    process_1.create_config.priority = __TEST_PROCESS_PRIORITY__;
+    process_1.create_config.stack_addr_low = (data_pointer_register_t) test_stack_1;
+    process_1.create_config.stack_size = __TEST_STACK_SIZE__;
+    process_1.create_config.entry_point = (process_entry_point_t) test_process_entry_point;
+    process_1.create_config.arg_1 = test_param;
 
-    // --- create and schedule another process with lower priority than init process ---
-    process_create(&test_process, &test_process_config);
+    // --- create another process with lower priority than init process ---
+    process_create(&process_1);
+    // ... and schedule it
+    process_schedule(&process_1, 0);
 }
 
 void test_kernel_process_lifecycle() {
 
-    int16_t return_value;
+    signal_t return_value;
 
     WDT_disable();
 
-    default_timer_init(&driver, (Timer_channel_handle_t *) &context_switch_handle, NULL, NULL);
-
-    test_process_executed = exit_hook_executed = false;
+    test_process_executed = exit_action_executed = false;
 
     // --- create and schedule process from current context ---
-    if (kernel_start(&init_process, __INIT_PROCESS_PRIORITY__, init, false, (Context_switch_handle_t *) &context_switch_handle, NULL)) {
-        test_fail();
-    }
+    default_kernel_start(__INIT_PROCESS_PRIORITY__, init, false);
+
+#ifndef __ASYNC_API_DISABLE__
+    // --- test async action execution on process exit ---
+    action_register(&action_1, NULL, test_process_exit_action_handler, NULL, NULL, NULL);
+
+    assert(process_register_dispose_action(&process_1, &action_1));
+#endif
 
     // --- test execution order and exit code passing ---
-    if (test_process_executed || ! test_process.alive) {
-        test_fail();
-    }
+    assert( ! test_process_executed && process_1.alive);
 
-    return_value = process_wait(&test_process);
+    return_value = process_wait(&process_1, NULL);
 
-    if ( ! test_process_executed || test_process.alive) {
-        test_fail();
-    }
+    assert(test_process_executed && ! process_1.alive);
 
-    if ( ! exit_hook_executed) {
-        test_fail();
-    }
+#ifndef __ASYNC_API_DISABLE__
+    assert(exit_action_executed);
+#endif
 
-    if (return_value != test_return_value) {
-        test_fail();
-    }
+    assert(return_value == test_return_value);
 
     // --- test wait on disposed process ---
-    return_value = process_wait(&test_process);
+    return_value = process_wait(&process_1, NULL);
 
-    if (return_value != KERNEL_DISPOSED_RESOURCE_ACCESS) {
-        test_fail();
-    }
+    assert(return_value == PROCESS_SIGNAL_EXIT);
 
     // --- test kernel halt ---
     process_kill(&init_process);
 
-    if (init_process.alive) {
-        test_fail();
-    }
+    assert_not(init_process.alive);
 
-    dispose(&driver);
+    dispose(&timer_driver);
 }
 
-static int16_t test_process_entry_point(void *arg) {
+static signal_t test_process_entry_point(signal_t arg) {
 
-    if (arg != test_param) {
-        test_fail();
-    }
+    assert(arg == test_param);
 
     test_process_executed = true;
-
-    process_current_set_exit_hook(test_process_exit_hook);
 
     return test_return_value;
 }
 
-static void test_process_exit_hook(int16_t exit_code) {
+static void test_process_exit_action_handler(Action_t *_this, signal_t exit_code) {
 
-    if (exit_code != test_return_value) {
-        test_fail();
-    }
+    assert(exit_code == test_return_value);
 
-    exit_hook_executed = true;
+    exit_action_executed = true;
 }

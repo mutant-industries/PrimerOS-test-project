@@ -11,8 +11,6 @@ void driver_disposable_chain_test_ISR(void);
 static dispose_function_t test_dispose_hook_1(Disposable_t *disposable);
 static dispose_function_t test_dispose_hook_2(Disposable_t *disposable);
 
-static Vector_handle_t h;
-static Process_control_block_t pcb;
 static bool dispose_hook_1_called;
 static bool dispose_hook_2_called;
 
@@ -22,44 +20,31 @@ void test_driver_disposable_chain() {
     uint16_t vector_content_backup;
 
     dispose_hook_1_called = dispose_hook_2_called = false;
-    running_process = &pcb;
 
     WDT_disable();
     default_clock_setup();
 
-    vector_handle_register(&h, (dispose_function_t) test_dispose_hook_1, WDT_VECTOR,
+    vector_handle_register(&vector, (dispose_function_t) test_dispose_hook_1, WDT_VECTOR,
                            (uint16_t) &SFRIE1, WDTIE, (uint16_t) &SFRIFG1, WDTIFG);
 
     vector_content_backup = __vector(WDT_VECTOR);
 
-    h.register_raw_handler(&h, driver_disposable_chain_test_ISR, true);
+    vector_register_raw_handler(&vector, driver_disposable_chain_test_ISR, true);
 
-    if (__vector(WDT_VECTOR) == vector_content_backup) {
-        test_fail();
-    }
+    assert_not(__vector(WDT_VECTOR) == vector_content_backup);
 
-    dispose(&h);
+    dispose(&vector);
 
-    if ( ! dispose_hook_1_called) {
-        test_fail();
-    }
-
-    if ( ! dispose_hook_2_called) {
-        test_fail();
-    }
-
-    if (__vector(WDT_VECTOR) != vector_content_backup) {
-        test_fail();
-    }
+    assert(dispose_hook_1_called);
+    assert(dispose_hook_2_called);
+    assert(__vector(WDT_VECTOR) == vector_content_backup);
 }
 
 static dispose_function_t test_dispose_hook_1(Disposable_t *disposable) {
 
     dispose_hook_1_called = true;
 
-    if (disposable != (Disposable_t *) &h) {
-        test_fail();
-    }
+    assert(disposable == (Disposable_t *) &vector);
 
     return (dispose_function_t) test_dispose_hook_2;
 }
@@ -68,9 +53,7 @@ static dispose_function_t test_dispose_hook_2(Disposable_t *disposable) {
 
     dispose_hook_2_called = true;
 
-    if (disposable != (Disposable_t *) &h) {
-        test_fail();
-    }
+    assert(disposable == (Disposable_t *) &vector);
 
     return NULL;
 }

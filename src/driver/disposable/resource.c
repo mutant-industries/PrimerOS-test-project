@@ -33,108 +33,71 @@ void test_driver_disposable_resource() {
 
     disposable = pcb._resource_list;
 
-    if (disposable != &r5) {
-        test_fail();
-    }
-
-    if ((disposable = disposable->_next) != &r4) {
-        test_fail();
-    }
-
-    if ((disposable = disposable->_next) != &r3) {
-        test_fail();
-    }
-
-    if ((disposable = disposable->_next) != &r2) {
-        test_fail();
-    }
-
-    if ((disposable = disposable->_next) != &r1) {
-        test_fail();
-    }
+    assert(disposable == &r5);
+    assert((disposable = disposable->_next) == &r4);
+    assert((disposable = disposable->_next) == &r3);
+    assert((disposable = disposable->_next) == &r2);
+    assert((disposable = disposable->_next) == &r1);
 
     // --- dispose list head ---
     dispose_hook_called = false;
 
     dispose(&r5);
 
-    if ( ! dispose_hook_called) {
-        test_fail();
-    }
+    assert(dispose_hook_called);
 
     for (disposable = pcb._resource_list, resource_list_length = 0; disposable; disposable = disposable->_next, resource_list_length++) {
-        if (disposable == &r5) {
-            test_fail();
-        }
+        assert_not(disposable == &r5);
     }
 
-    if (resource_list_length != 4) {
-        test_fail();
-    }
+    assert(resource_list_length == 4);
 
     // --- dispose resource, that is not on owner list ---
     dispose_hook_called = false;
 
     dispose(&r5);
 
-    if (dispose_hook_called) {
-        test_fail();
-    }
+    assert_not(dispose_hook_called);
 
     // --- dispose list tail ---
     dispose_hook_called = false;
 
     dispose(&r1);
 
-    if ( ! dispose_hook_called) {
-        test_fail();
-    }
+    assert(dispose_hook_called);
 
     for (disposable = pcb._resource_list, resource_list_length = 0; disposable; disposable = disposable->_next, resource_list_length++) {
-        if (disposable == &r1) {
-            test_fail();
-        }
+        assert_not(disposable == &r1);
     }
 
-    if (resource_list_length != 3) {
-        test_fail();
-    }
+    assert(resource_list_length == 3);
 
     // --- dispose resource, that is not on owner list ---
     dispose_hook_called = false;
 
     dispose(&r1);
 
-    if (dispose_hook_called) {
-        test_fail();
-    }
+    assert_not(dispose_hook_called);
+
     // --- dispose list middle resource ---
     dispose_hook_called = false;
 
     dispose(&r3);
 
-    if ( ! dispose_hook_called) {
-        test_fail();
-    }
+    assert(dispose_hook_called);
 
     for (disposable = pcb._resource_list, resource_list_length = 0; disposable; disposable = disposable->_next, resource_list_length++) {
-        if (disposable == &r3) {
-            test_fail();
-        }
+        assert_not(disposable == &r3);
     }
 
-    if (resource_list_length != 2) {
-        test_fail();
-    }
+    assert(resource_list_length == 2);
 
     // --- dispose resource, that is not on owner list ---
     dispose_hook_called = false;
 
     dispose(&r3);
 
-    if (dispose_hook_called) {
-        test_fail();
-    }
+    assert_not(dispose_hook_called);
 
     // --- dispose remaining resources ---
     resource_list_expected_length = 2;
@@ -146,30 +109,22 @@ void test_driver_disposable_resource() {
 
         resource_list_expected_length--;
 
-        if ( ! dispose_hook_called) {
-            test_fail();
-        }
+        assert(dispose_hook_called);
 
         dispose_hook_called = false;
 
         dispose(disposable);
 
-        if (dispose_hook_called) {
-            test_fail();
-        }
+        assert_not(dispose_hook_called);
 
         for (disposable = pcb._resource_list, resource_list_length = 0; disposable;
              disposable = disposable->_next, resource_list_length++);
 
 
-        if (resource_list_expected_length != resource_list_length) {
-            test_fail();
-        }
+        assert(resource_list_expected_length == resource_list_length);
     }
 
-    if (resource_list_expected_length) {
-        test_fail();
-    }
+    assert( ! resource_list_expected_length);
 
 #endif /* __RESOURCE_MANAGEMENT_ENABLE__ */
 }

@@ -10,7 +10,7 @@ volatile __persistent uint16_t last_passed_test_id = 0;
 
 // -------------------------------------------------------------------------------------
 
-#define TEST_CNT    11
+#define TEST_CNT    12
 
 void (*tests_all[TEST_CNT])(void) = {
     test_driver_wdt_disabled,
@@ -24,19 +24,20 @@ void (*tests_all[TEST_CNT])(void) = {
     test_driver_stack_pointer,
     test_driver_stack_deferred,
     test_kernel_process_lifecycle,
+    test_kernel_action_sorting,
 };
 
 // -------------------------------------------------------------------------------------
 
 void test_runner_all() {
-    volatile uint32_t i, j;
+    volatile uint16_t i, j;
 
     IO_debug_init();
 
     if (last_executed_test_id != last_passed_test_id) {
         last_executed_test_id = last_passed_test_id = 0;
 
-        test_fail();
+        assert(false);
     }
 
     if (last_executed_test_id == TEST_CNT) {

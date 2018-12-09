@@ -8,19 +8,9 @@
 
 #define __TEST_TIMER_NO__   1
 
-static void test_interrupt_handler(Process_control_block_t *);
+static void test_interrupt_handler(Timer_driver_t *);
 static dispose_function_t test_dispose_hook(Disposable_t *disposable);
 
-static Timer_config_t config;
-static Timer_driver_t driver;
-
-static Timer_channel_handle_t main_handle;
-static Timer_channel_handle_t shared_handle_1;
-static Timer_channel_handle_t shared_handle_2;
-static Timer_channel_handle_t overflow_handle;
-static Timer_channel_handle_t dummy_handle;
-
-static Process_control_block_t pcb;
 static volatile uint8_t interrupt_handler_call_count;
 static volatile bool dispose_hook_called;
 
@@ -29,7 +19,6 @@ static volatile bool dispose_hook_called;
 void test_driver_timer_dispose() {
     uint16_t main_vector_content_backup, shared_vector_content_backup, counter;
 
-    running_process = &pcb;
     dispose_hook_called = false;
     interrupt_handler_call_count = 0;
 
@@ -42,461 +31,259 @@ void test_driver_timer_dispose() {
     main_vector_content_backup = __vector(main_vector_no);
     shared_vector_content_backup = __vector(shared_vector_no);
 
-    config.mode = MC__CONTINOUS;
-    config.clock_source = TASSEL__SMCLK;
-    config.clock_source_divider = ID__1;
-    config.clock_source_divider_expansion = TAIDEX__1;
+    timer_config.mode = MC__CONTINOUS;
+    timer_config.clock_source = TASSEL__SMCLK;
+    timer_config.clock_source_divider = ID__1;
+    timer_config.clock_source_divider_expansion = TAIDEX__1;
 
     __enable_interrupt();
 
-    timer_driver_register(&driver, &config, TIMER_A_BASE(__TEST_TIMER_NO__), main_vector_no, shared_vector_no, 3);
+    timer_driver_register(&timer_driver, &timer_config, TIMER_A_BASE(__TEST_TIMER_NO__), main_vector_no, shared_vector_no, 3);
 
     // --- main handle allocate ---
-    if (driver.channel_handle_register(&driver, &main_handle, MAIN, (dispose_function_t) test_dispose_hook)) {
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &main_handle, MAIN, (dispose_function_t) test_dispose_hook));
 
-    if (main_handle.vector.register_handler(&main_handle.vector, (void (*)(void *)) test_interrupt_handler, &pcb) == NULL) {
-        test_fail();
-    }
+    assert(vector_register_handler(&main_handle, test_interrupt_handler, &timer_driver, NULL));
 
-    if (main_vector_content_backup == __vector(main_vector_no)) {
-        test_fail();
-    }
+    assert(main_vector_content_backup != __vector(main_vector_no));
 
     // --- main handle trigger ---
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (main_handle.vector.trigger(&main_handle.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&main_handle));
 
-    if (interrupt_handler_call_count != 1) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 1);
 
-    if (main_handle.vector.trigger(&main_handle.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&main_handle));
 
-    if (interrupt_handler_call_count != 2) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 2);
 
     // --- reset ---
-    if (main_handle.reset(&main_handle)) {
-        test_fail();
-    }
+    assert( ! timer_channel_reset(&main_handle));
 
     // --- timer counter ---
-    if (main_handle.get_counter(&main_handle, &counter) || counter) {
-        test_fail();
-    }
+    assert( ! timer_channel_get_counter(&main_handle, &counter) && ! counter);
 
     // --- main handle allocate when allocated already ---
-    if (driver.channel_handle_register(&driver, &dummy_handle, MAIN,
-               (dispose_function_t) test_dispose_hook) != TIMER_NO_HANDLE_AVAILABLE) {
-
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &dummy_handle, MAIN,
+               (dispose_function_t) test_dispose_hook) != TIMER_NO_HANDLE_AVAILABLE);
 
     interrupt_handler_call_count = 0;
 
     // --- main handle dispose ---
-    if (dispose_hook_called) {
-        test_fail();
-    }
+    assert_not(dispose_hook_called);
 
     dispose(&main_handle);
 
-    if ( ! dispose_hook_called) {
-        test_fail();
-    }
+    assert(dispose_hook_called);
+    assert(main_vector_content_backup == __vector(main_vector_no));
 
-    if (main_vector_content_backup != __vector(main_vector_no)) {
-        test_fail();
-    }
+    assert(vector_trigger(&main_handle) && timer_channel_start(&main_handle) && timer_channel_reset(&main_handle));
 
-    if ( ! main_handle.vector.trigger(&main_handle.vector) || ! main_handle.start(&main_handle)
-         || ! main_handle.reset(&main_handle)) {
-        test_fail();
-    }
-
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
-
-    if (main_handle.get_counter(&main_handle, &counter) || counter) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
+    assert( ! timer_channel_get_counter(&main_handle, &counter) && ! counter);
 
     dispose_hook_called = false;
 
     // --- main handle allocate once again ---
-    if (driver.channel_handle_register(&driver, &main_handle, MAIN, (dispose_function_t) test_dispose_hook)) {
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &main_handle, MAIN, (dispose_function_t) test_dispose_hook));
 
-    if (main_handle.vector
-                .register_handler(&main_handle.vector, (void (*)(void *)) test_interrupt_handler, &pcb) == NULL) {
-        test_fail();
-    }
+    assert(vector_register_handler(&main_handle, test_interrupt_handler, &timer_driver, NULL));
 
-    if (main_vector_content_backup == __vector(main_vector_no)) {
-        test_fail();
-    }
+    assert_not(main_vector_content_backup == __vector(main_vector_no));
 
     // --- main handle trigger ---
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (main_handle.vector.trigger(&main_handle.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&main_handle));
 
-    if (interrupt_handler_call_count != 1) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 1);
 
     interrupt_handler_call_count = 0;
 
     // --- shared handle 1 allocate ---
-    if (driver.channel_handle_register(&driver, &shared_handle_1, SHARED, (dispose_function_t) test_dispose_hook)) {
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &shared_handle_1, SHARED, (dispose_function_t) test_dispose_hook));
 
-    if (shared_handle_1.vector
-                .register_handler(&shared_handle_1.vector, (void (*)(void *)) test_interrupt_handler, &pcb) == NULL) {
-        test_fail();
-    }
+    assert(vector_register_handler(&shared_handle_1, test_interrupt_handler, &timer_driver, NULL));
 
-    if (shared_vector_content_backup == __vector(shared_vector_no)) {
-        test_fail();
-    }
+    assert_not(shared_vector_content_backup == __vector(shared_vector_no));
 
     // --- shared handle 1 trigger ---
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (shared_handle_1.vector.trigger(&shared_handle_1.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&shared_handle_1));
 
-    if (interrupt_handler_call_count != 1) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 1);
 
-    if (shared_handle_1.vector.trigger(&shared_handle_1.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&shared_handle_1));
 
-    if (interrupt_handler_call_count != 2) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 2);
 
     // --- reset ---
-    if (shared_handle_1.reset(&shared_handle_1)) {
-        test_fail();
-    }
+    assert( ! timer_channel_reset(&shared_handle_1));
 
     // --- timer counter ---
-    if (shared_handle_1.get_counter(&shared_handle_1, &counter) || counter) {
-        test_fail();
-    }
+    assert( ! timer_channel_get_counter(&shared_handle_1, &counter) && ! counter);
 
     interrupt_handler_call_count = 0;
 
     // --- shared handle 2 allocate ---
-    if (driver.channel_handle_register(&driver, &shared_handle_2, SHARED, (dispose_function_t) test_dispose_hook)) {
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &shared_handle_2, SHARED, (dispose_function_t) test_dispose_hook));
 
-    if (shared_handle_2.vector
-                .register_handler(&shared_handle_2.vector, (void (*)(void *)) test_interrupt_handler, &pcb) == NULL) {
-        test_fail();
-    }
+    assert(vector_register_handler(&shared_handle_2, test_interrupt_handler, &timer_driver, NULL));
 
-    if (shared_vector_content_backup == __vector(shared_vector_no)) {
-        test_fail();
-    }
+    assert_not(shared_vector_content_backup == __vector(shared_vector_no));
 
     // --- shared handle 2 trigger ---
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (shared_handle_2.vector.trigger(&shared_handle_2.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&shared_handle_2));
 
-    if (interrupt_handler_call_count != 1) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 1);
 
-    if (shared_handle_2.vector.trigger(&shared_handle_2.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&shared_handle_2));
 
-    if (interrupt_handler_call_count != 2) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 2);
 
     // --- reset ---
-    if (shared_handle_2.reset(&shared_handle_2)) {
-        test_fail();
-    }
+    assert( ! timer_channel_reset(&shared_handle_2));
 
     // --- timer counter ---
-    if (shared_handle_2.get_counter(&shared_handle_2, &counter) || counter) {
-        test_fail();
-    }
+    assert( ! timer_channel_get_counter(&shared_handle_2, &counter) && ! counter);
 
     interrupt_handler_call_count = 0;
 
     // --- shared handle allocate when no more handles available ---
-    if (driver.channel_handle_register(&driver, &dummy_handle, SHARED,
-               (dispose_function_t) test_dispose_hook) != TIMER_NO_HANDLE_AVAILABLE) {
-
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &dummy_handle, SHARED,
+               (dispose_function_t) test_dispose_hook) != TIMER_NO_HANDLE_AVAILABLE);
 
     // --- shared handle 1 dispose ---
-    if (dispose_hook_called) {
-        test_fail();
-    }
+    assert_not(dispose_hook_called);
 
     dispose(&shared_handle_1);
 
-    if ( ! dispose_hook_called) {
-        test_fail();
-    }
+    assert(dispose_hook_called);
+    assert_not(shared_vector_content_backup == __vector(shared_vector_no));
 
-    if (shared_vector_content_backup == __vector(shared_vector_no)) {
-        test_fail();
-    }
+    assert(vector_trigger(&shared_handle_1) && timer_channel_start(&shared_handle_1) && timer_channel_reset(&shared_handle_1));
 
-    if ( ! shared_handle_1.vector.trigger(&shared_handle_1.vector) || ! shared_handle_1.start(&shared_handle_1)
-         || ! shared_handle_1.reset(&shared_handle_1)) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
-
-    if (shared_handle_1.get_counter(&shared_handle_1, &counter) || counter) {
-        test_fail();
-    }
+    assert( ! timer_channel_get_counter(&shared_handle_1, &counter) && ! counter);
 
     dispose_hook_called = false;
 
     // --- shared handle 1 allocate once again ---
-    if (driver.channel_handle_register(&driver, &shared_handle_1, SHARED, (dispose_function_t) test_dispose_hook)) {
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &shared_handle_1, SHARED, (dispose_function_t) test_dispose_hook));
 
-    if (shared_handle_1.vector
-                .register_handler(&shared_handle_1.vector, (void (*)(void *)) test_interrupt_handler, &pcb) == NULL) {
-        test_fail();
-    }
+    assert(vector_register_handler(&shared_handle_1, test_interrupt_handler, &timer_driver, NULL));
 
     // --- shared handle 1 trigger ---
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (shared_handle_1.vector.trigger(&shared_handle_1.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&shared_handle_1));
 
-    if (interrupt_handler_call_count != 1) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 1);
 
     interrupt_handler_call_count = 0;
 
     // --- shared handle allocate when no more handles available ---
-    if (driver.channel_handle_register(&driver, &dummy_handle, SHARED,
-               (dispose_function_t) test_dispose_hook) != TIMER_NO_HANDLE_AVAILABLE) {
-
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &dummy_handle, SHARED,
+               (dispose_function_t) test_dispose_hook) != TIMER_NO_HANDLE_AVAILABLE);
 
     // --- overflow handle allocate ---
-    if (driver.channel_handle_register(&driver, &overflow_handle, OVERFLOW, (dispose_function_t) test_dispose_hook)) {
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &overflow_handle, OVERFLOW, (dispose_function_t) test_dispose_hook));
 
-    if (overflow_handle.vector
-                .register_handler(&overflow_handle.vector, (void (*)(void *)) test_interrupt_handler, &pcb) == NULL) {
-        test_fail();
-    }
+    assert(vector_register_handler(&overflow_handle, test_interrupt_handler, &timer_driver, NULL));
 
     // --- overflow handle trigger ---
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (overflow_handle.vector.trigger(&overflow_handle.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&overflow_handle));
 
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
     // interrupt should should fire once enabled
-    if (overflow_handle.vector.set_enabled(&overflow_handle.vector, true)) {
-        test_fail();
-    }
+    assert( ! vector_set_enabled(&overflow_handle, true));
 
-    if (interrupt_handler_call_count != 1) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 1);
 
-    if (overflow_handle.vector.trigger(&overflow_handle.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&overflow_handle));
 
-    if (interrupt_handler_call_count != 2) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 2);
 
-    if (overflow_handle.vector.trigger(&overflow_handle.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&overflow_handle));
 
-    if (interrupt_handler_call_count != 3) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 3);
 
     // --- reset ---
-    if (overflow_handle.reset(&overflow_handle)) {
-        test_fail();
-    }
+    assert( ! timer_channel_reset(&overflow_handle));
 
     // --- timer counter ---
-    if (overflow_handle.get_counter(&overflow_handle, &counter) || counter) {
-        test_fail();
-    }
+    assert( ! timer_channel_get_counter(&overflow_handle, &counter) && ! counter);
 
     // --- overflow handle allocate when allocated already ---
-    if (driver.channel_handle_register(&driver, &dummy_handle, OVERFLOW,
-               (dispose_function_t) test_dispose_hook) != TIMER_NO_HANDLE_AVAILABLE) {
-
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &dummy_handle, OVERFLOW,
+               (dispose_function_t) test_dispose_hook) != TIMER_NO_HANDLE_AVAILABLE);
 
     interrupt_handler_call_count = 0;
 
     // --- overflow handle dispose ---
-    if (dispose_hook_called) {
-        test_fail();
-    }
+    assert_not(dispose_hook_called);
 
     dispose(&overflow_handle);
 
-    if ( ! dispose_hook_called) {
-        test_fail();
-    }
+    assert(dispose_hook_called);
+    assert_not(shared_vector_content_backup == __vector(shared_vector_no));
 
-    if (shared_vector_content_backup == __vector(shared_vector_no)) {
-        test_fail();
-    }
+    assert(vector_trigger(&overflow_handle) && timer_channel_start(&overflow_handle) && timer_channel_reset(&overflow_handle));
 
-    if ( ! overflow_handle.vector.trigger(&overflow_handle.vector) || ! overflow_handle.start(&overflow_handle)
-         || ! overflow_handle.reset(&overflow_handle)) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
-
-    if (overflow_handle.get_counter(&overflow_handle, &counter) || counter) {
-        test_fail();
-    }
+    assert( ! timer_channel_get_counter(&overflow_handle, &counter) && ! counter);
 
     dispose_hook_called = false;
 
     // --- overflow handle allocate once again ---
-    if (driver.channel_handle_register(&driver, &overflow_handle, OVERFLOW, (dispose_function_t) test_dispose_hook)) {
-        test_fail();
-    }
+    assert( ! timer_driver_channel_register(&timer_driver, &overflow_handle, OVERFLOW, (dispose_function_t) test_dispose_hook));
 
-    if (overflow_handle.vector
-                .register_handler(&overflow_handle.vector, (void (*)(void *)) test_interrupt_handler, &pcb) == NULL) {
-        test_fail();
-    }
+    assert(vector_register_handler(&overflow_handle, test_interrupt_handler, &timer_driver, NULL));
 
     // --- overflow handle trigger ---
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (overflow_handle.vector.set_enabled(&overflow_handle.vector, true)) {
-        test_fail();
-    }
+    assert( ! vector_set_enabled(&overflow_handle, true));
 
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if (overflow_handle.vector.trigger(&overflow_handle.vector)) {
-        test_fail();
-    }
+    assert( ! vector_trigger(&overflow_handle));
 
-    if (interrupt_handler_call_count != 1) {
-        test_fail();
-    }
+    assert(interrupt_handler_call_count == 1);
 
     interrupt_handler_call_count = 0;
 
     // --- driver dispose ---
-    dispose(&driver);
+    dispose(&timer_driver);
 
-    if ( ! dispose_hook_called) {
-        test_fail();
-    }
+    assert(dispose_hook_called);
 
-    if ( ! main_handle.start(&main_handle) || ! shared_handle_1.start(&shared_handle_1) ||
-         ! overflow_handle.start(&overflow_handle)) {
-        test_fail();
-    }
+    assert(timer_channel_start(&main_handle) && timer_channel_start(&shared_handle_1) && timer_channel_start(&overflow_handle));
 
-    if ( ! main_handle.vector.trigger(&main_handle.vector) || ! shared_handle_1.vector.trigger(&shared_handle_1.vector) ||
-         ! overflow_handle.vector.trigger(&overflow_handle.vector)) {
-        test_fail();
-    }
+    assert(vector_trigger(&main_handle) && vector_trigger(&shared_handle_1) && vector_trigger(&overflow_handle));
 
-    if (interrupt_handler_call_count) {
-        test_fail();
-    }
+    assert( ! interrupt_handler_call_count);
 
-    if ( ! main_handle.get_counter(&main_handle, &counter) || ! shared_handle_1.get_counter(&shared_handle_1, &counter) ||
-            ! overflow_handle.get_counter(&overflow_handle, &counter)) {
-        test_fail();
-    }
+    assert(timer_channel_get_counter(&main_handle, &counter) && timer_channel_get_counter(&shared_handle_1, &counter) &&
+            timer_channel_get_counter(&overflow_handle, &counter));
 
-    if (main_vector_content_backup != __vector(main_vector_no)) {
-        test_fail();
-    }
-
-    if (shared_vector_content_backup != __vector(shared_vector_no)) {
-        test_fail();
-    }
+    assert(main_vector_content_backup == __vector(main_vector_no));
+    assert(shared_vector_content_backup == __vector(shared_vector_no));
 }
 
 // -------------------------------------------------------------------------------------
 
-static void test_interrupt_handler(Process_control_block_t *handler_param) {
-    if (handler_param != &pcb) {
-        test_fail();
-    }
+static void test_interrupt_handler(Timer_driver_t *handler_param) {
+    assert(handler_param == &timer_driver);
 
     interrupt_handler_call_count++;
 }

@@ -3,7 +3,6 @@
 #ifndef _TEST_DRIVER_WDT_WATCHDOG_H_
 #define _TEST_DRIVER_WDT_WATCHDOG_H_
 
-
 #include <test/common.h>
 
 

@@ -4,7 +4,8 @@
 #define _TEST_KERNEL_PROCESS_LIFECYCLE_H_
 
 #include <test/common.h>
-#include <test/driverlib.h>
+#include <test/driver/common.h>
+#include <test/kernel/common.h>
 
 
 void test_kernel_process_lifecycle(void);
