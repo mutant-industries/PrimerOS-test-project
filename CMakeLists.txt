@@ -28,7 +28,9 @@ add_executable(PrimerOS-test-project
         src/driver/stack/deferred.c
         src/kernel/common.c
         src/kernel/process/lifecycle.c
-        src/kernel/action/sorting.c)
+        src/kernel/action/sorting.c
+        src/kernel/sync/barrier.c
+        src/kernel/sync/inversion.c)
 
 target_include_directories(PrimerOS-test-project
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>

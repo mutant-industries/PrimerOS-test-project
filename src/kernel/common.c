@@ -32,6 +32,20 @@ Action_queue_t action_queue_1;
 
 // -------------------------------------------------------------------------------------
 
+Schedule_config_t init_process_schedule_config;
+Schedule_config_t process_1_schedule_config;
+Schedule_config_t process_2_schedule_config;
+
+// -------------------------------------------------------------------------------------
+
+Semaphore_t semaphore_1;
+Semaphore_t semaphore_2;
+
+Mutex_t mutex_1;
+Mutex_t mutex_2;
+
+// -------------------------------------------------------------------------------------
+
 void default_kernel_start(priority_t init_process_priority, void (*sys_init)(void), bool wakeup) {
 
     default_timer_init(&timer_driver, _timer_channel_handle_(&context_switch_handle), _timer_channel_handle_(&timing_handle), NULL);

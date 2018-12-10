@@ -10,7 +10,7 @@ volatile __persistent uint16_t last_passed_test_id = 0;
 
 // -------------------------------------------------------------------------------------
 
-#define TEST_CNT    12
+#define TEST_CNT    14
 
 void (*tests_all[TEST_CNT])(void) = {
     test_driver_wdt_disabled,
@@ -25,6 +25,8 @@ void (*tests_all[TEST_CNT])(void) = {
     test_driver_stack_deferred,
     test_kernel_process_lifecycle,
     test_kernel_action_sorting,
+    test_kernel_sync_barrier,
+    test_kernel_sync_inversion,
 };
 
 // -------------------------------------------------------------------------------------

@@ -14,6 +14,8 @@
 #include <action.h>
 #include <action/queue.h>
 #include <process.h>
+#include <sync/semaphore.h>
+#include <sync/mutex.h>
 #include <time.h>
 
 // -------------------------------------------------------------------------------------
@@ -45,6 +47,20 @@ extern Action_t action_4;
 extern Action_t action_5;
 
 extern Action_queue_t action_queue_1;
+
+// -------------------------------------------------------------------------------------
+
+extern Schedule_config_t init_process_schedule_config;
+extern Schedule_config_t process_1_schedule_config;
+extern Schedule_config_t process_2_schedule_config;
+
+// -------------------------------------------------------------------------------------
+
+extern Semaphore_t semaphore_1;
+extern Semaphore_t semaphore_2;
+
+extern Mutex_t mutex_1;
+extern Mutex_t mutex_2;
 
 // -------------------------------------------------------------------------------------
 

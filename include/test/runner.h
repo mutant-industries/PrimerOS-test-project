@@ -21,6 +21,8 @@
 #include <test/driver/stack/deferred.h>
 #include <test/kernel/process/lifecycle.h>
 #include <test/kernel/action/sorting.h>
+#include <test/kernel/sync/barrier.h>
+#include <test/kernel/sync/inversion.h>
 
 
 /**
