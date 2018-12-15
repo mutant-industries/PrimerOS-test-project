@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // Copyright (c) 2018-2019 Mutant Industries ltd.
-#include <test/driver/disposable/chain.h>
+#include <test/kernel/dispose/chain.h>
 #include <driver/disposable.h>
 #include <driver/vector.h>
 #include <process.h>
@@ -16,7 +16,7 @@ static bool dispose_hook_2_called;
 
 // -------------------------------------------------------------------------------------
 
-void test_driver_disposable_chain() {
+void test_kernel_dispose_chain() {
     uint16_t vector_content_backup;
 
     dispose_hook_1_called = dispose_hook_2_called = false;

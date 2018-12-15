@@ -7,18 +7,18 @@
 
 // -------------------------------------------------------------------------------------
 
-Vector_handle_t vector;
+__resource Vector_handle_t vector;
 
 // -------------------------------------------------------------------------------------
 
-Timer_config_t timer_config;
-Timer_driver_t timer_driver;
+__resource Timer_config_t timer_config;
+__resource Timer_driver_t timer_driver;
 
-Timer_channel_handle_t main_handle;
-Timer_channel_handle_t shared_handle_1;
-Timer_channel_handle_t shared_handle_2;
-Timer_channel_handle_t overflow_handle;
-Timer_channel_handle_t dummy_handle;
+__resource Timer_channel_handle_t main_handle;
+__resource Timer_channel_handle_t shared_handle_1;
+__resource Timer_channel_handle_t shared_handle_2;
+__resource Timer_channel_handle_t overflow_handle;
+__resource Timer_channel_handle_t dummy_handle;
 
 // -------------------------------------------------------------------------------------
 

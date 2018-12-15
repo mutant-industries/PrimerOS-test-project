@@ -19,18 +19,22 @@ add_executable(PrimerOS-test-project
         src/driver/wdt/disabled.c
         src/driver/wdt/watchdog.c
         src/driver/wdt/interval.c
-        src/driver/disposable/chain.c
-        src/driver/disposable/resource.c
         src/driver/vector/trigger.c
         src/driver/timer/dispose.c
         src/driver/timer/multiple.c
         src/driver/stack/pointer.c
         src/driver/stack/deferred.c
         src/kernel/common.c
+        src/kernel/dispose/chain.c
+        src/kernel/dispose/resource.c
         src/kernel/process/lifecycle.c
-        src/kernel/action/sorting.c
+        src/kernel/queue/sorting.c
+        src/kernel/queue/fifo.c
+        src/kernel/queue/priority.c
         src/kernel/sync/barrier.c
-        src/kernel/sync/inversion.c)
+        src/kernel/sync/inversion.c
+        src/kernel/event/trigger.c
+        src/kernel/event/inheritance.c)
 
 target_include_directories(PrimerOS-test-project
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>

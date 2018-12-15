@@ -10,23 +10,27 @@ volatile __persistent uint16_t last_passed_test_id = 0;
 
 // -------------------------------------------------------------------------------------
 
-#define TEST_CNT    14
+#define TEST_CNT    18
 
 void (*tests_all[TEST_CNT])(void) = {
     test_driver_wdt_disabled,
     test_driver_wdt_watchdog,
     test_driver_wdt_interval,
-    test_driver_disposable_chain,
-    test_driver_disposable_resource,
     test_driver_vector_trigger,
     test_driver_timer_dispose,
     test_driver_timer_multiple,
     test_driver_stack_pointer,
     test_driver_stack_deferred,
+    test_kernel_dispose_chain,
+    test_kernel_dispose_resource,
     test_kernel_process_lifecycle,
-    test_kernel_action_sorting,
+    test_kernel_queue_sorting,
+    test_kernel_queue_fifo,
+    test_kernel_queue_priority,
     test_kernel_sync_barrier,
     test_kernel_sync_inversion,
+    test_kernel_event_trigger,
+    test_kernel_event_inheritance,
 };
 
 // -------------------------------------------------------------------------------------

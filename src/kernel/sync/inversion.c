@@ -37,7 +37,6 @@ static void init() {
 
 void test_kernel_sync_inversion() {
 
-
     WDT_disable();
 
     process_1_started = process_2_started = false;
@@ -57,12 +56,12 @@ void test_kernel_sync_inversion() {
     // --- create process with higher priority than init process ---
     process_create(&process_2);
 
-    assert(process_1.alive && process_2.alive);
+    assert(process_is_alive(&process_1) && process_is_alive(&process_2));
 
     assert( ! mutex_try_lock(&mutex_1));
 
     // --- test priority unchanged after mutex acquired ---
-    assert(sorted_queue_item_priority(running_process) == 0);
+    assert(sorted_set_item_priority(running_process) == 0);
 
     assert_not(process_1_started || process_2_started);
 
@@ -71,12 +70,12 @@ void test_kernel_sync_inversion() {
 
     assert(process_2_started && ! process_2_mutex_acquired);
 
-    assert(sorted_queue_item_priority(running_process) == 2);
+    assert(sorted_set_item_priority(running_process) == 2);
 
     // --- test kill process, that is in a mutex queue ---
     process_kill(&process_2);
 
-    assert(sorted_queue_item_priority(running_process) == 0);
+    assert(sorted_set_item_priority(running_process) == 0);
 
     // ------------------------
 
@@ -89,23 +88,23 @@ void test_kernel_sync_inversion() {
 
     assert(process_1_started && ! process_1_mutex_acquired);
 
-    assert(sorted_queue_item_priority(running_process) == 1);
+    assert(sorted_set_item_priority(running_process) == 1);
 
     process_schedule(&process_2, 0);
 
     assert(process_2_started && ! process_2_mutex_acquired);
 
-    assert(sorted_queue_item_priority(running_process) == 2);
+    assert(sorted_set_item_priority(running_process) == 2);
 
     process_kill(&process_2);
 
-    assert(sorted_queue_item_priority(running_process) == 1);
+    assert(sorted_set_item_priority(running_process) == 1);
 
     // --- test priority reset when mutex released ---
     assert( ! mutex_unlock(&mutex_1));
 
     assert(process_1_mutex_acquired);
-    assert(sorted_queue_item_priority(running_process) == 0);
+    assert(sorted_set_item_priority(running_process) == 0);
 
     // ------------------------
 
@@ -126,35 +125,35 @@ void test_kernel_sync_inversion() {
     // --- test lock with schedule config ---
     assert( ! mutex_lock(&mutex_1, &init_process_schedule_config));
 
-    assert(sorted_queue_item_priority(running_process) == 2);
+    assert(sorted_set_item_priority(running_process) == 2);
 
     process_schedule(&process_2, 0);
 
     assert(process_2_started && ! process_2_mutex_acquired);
 
-    assert(sorted_queue_item_priority(running_process) == 3);
+    assert(sorted_set_item_priority(running_process) == 3);
 
     process_kill(&process_2);
 
-    assert(sorted_queue_item_priority(running_process) == 2);
+    assert(sorted_set_item_priority(running_process) == 2);
 
     process_schedule(&process_1, 0);
 
     assert(process_1_started && ! process_1_mutex_acquired);
 
-    assert(sorted_queue_item_priority(running_process) == 4);
+    assert(sorted_set_item_priority(running_process) == 4);
 
     process_kill(&process_1);
 
-    assert(sorted_queue_item_priority(running_process) == 2);
+    assert(sorted_set_item_priority(running_process) == 2);
 
     assert( ! mutex_unlock(&mutex_1));
 
-    assert(sorted_queue_item_priority(running_process) == 2);
+    assert(sorted_set_item_priority(running_process) == 2);
 
     yield();
 
-    assert(sorted_queue_item_priority(running_process) == 0);
+    assert(sorted_set_item_priority(running_process) == 0);
 
     // ------------------------
 
@@ -167,34 +166,34 @@ void test_kernel_sync_inversion() {
     // --- test release lock and keep requested priority ---
     assert( ! mutex_lock(&mutex_1, &init_process_schedule_config));
 
-    assert(sorted_queue_item_priority(running_process) == 2);
+    assert(sorted_set_item_priority(running_process) == 2);
 
     process_schedule(&process_1, 0);
 
     assert(process_1_started && ! process_1_mutex_acquired);
 
-    assert(sorted_queue_item_priority(running_process) == 4);
+    assert(sorted_set_item_priority(running_process) == 4);
 
     process_schedule(&process_2, 0);
 
     assert_not(process_2_started);
 
-    assert(sorted_queue_item_priority(running_process) == 4);
+    assert(sorted_set_item_priority(running_process) == 4);
 
     process_kill(&process_1);
 
     assert(process_2_started && ! process_2_mutex_acquired);
-    assert(sorted_queue_item_priority(running_process) == 3);
+    assert(sorted_set_item_priority(running_process) == 3);
 
     assert( ! mutex_unlock(&mutex_1));
 
     assert(process_2_mutex_acquired);
 
-    assert(sorted_queue_item_priority(running_process) == 2);
+    assert(sorted_set_item_priority(running_process) == 2);
 
     yield();
 
-    assert(sorted_queue_item_priority(running_process) == 0);
+    assert(sorted_set_item_priority(running_process) == 0);
 
     // kernel halt
     dispose(&init_process);

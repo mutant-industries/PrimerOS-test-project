@@ -52,23 +52,19 @@ void test_kernel_process_lifecycle() {
     // --- create and schedule process from current context ---
     default_kernel_start(__INIT_PROCESS_PRIORITY__, init, false);
 
-#ifndef __ASYNC_API_DISABLE__
     // --- test async action execution on process exit ---
-    action_register(&action_1, NULL, test_process_exit_action_handler, NULL, NULL, NULL);
+    action_create(&action_1, NULL, test_process_exit_action_handler);
 
-    assert(process_register_dispose_action(&process_1, &action_1));
-#endif
+    assert(process_register_exit_action(&process_1, &action_1));
 
     // --- test execution order and exit code passing ---
-    assert( ! test_process_executed && process_1.alive);
+    assert( ! test_process_executed && process_is_alive(&process_1));
 
     return_value = process_wait(&process_1, NULL);
 
-    assert(test_process_executed && ! process_1.alive);
+    assert(test_process_executed && ! process_is_alive(&process_1));
 
-#ifndef __ASYNC_API_DISABLE__
     assert(exit_action_executed);
-#endif
 
     assert(return_value == test_return_value);
 
@@ -80,7 +76,7 @@ void test_kernel_process_lifecycle() {
     // --- test kernel halt ---
     process_kill(&init_process);
 
-    assert_not(init_process.alive);
+    assert_not(process_is_alive(&init_process));
 
     dispose(&timer_driver);
 }

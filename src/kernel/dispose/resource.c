@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // Copyright (c) 2018-2019 Mutant Industries ltd.
-#include <test/driver/disposable/resource.h>
+#include <test/kernel/dispose/resource.h>
 #include <driver/disposable.h>
 #include <process.h>
 
@@ -8,46 +8,48 @@
 
 static dispose_function_t test_dispose_hook(Disposable_t *);
 
-static Disposable_t r1, r2, r3, r4, r5;
-static Process_control_block_t pcb;
 static bool dispose_hook_called;
 
 // -------------------------------------------------------------------------------------
 
-void test_driver_disposable_resource() {
+void test_kernel_dispose_resource() {
 
     Disposable_t *disposable;
     uint8_t resource_list_length, resource_list_expected_length;
 
 #ifdef __RESOURCE_MANAGEMENT_ENABLE__
-    running_process = &pcb;
+    running_process = &init_process;
 
     WDT_disable();
     default_clock_setup();
 
-    __dispose_hook_register(&r1, test_dispose_hook);
-    __dispose_hook_register(&r2, test_dispose_hook);
-    __dispose_hook_register(&r3, test_dispose_hook);
-    __dispose_hook_register(&r4, test_dispose_hook);
-    __dispose_hook_register(&r5, test_dispose_hook);
+    init_process._resource_list = NULL;
 
-    disposable = pcb._resource_list;
+    __dispose_hook_register(&action_1, test_dispose_hook);
+    __dispose_hook_register(&action_2, test_dispose_hook);
+    __dispose_hook_register(&action_3, test_dispose_hook);
+    __dispose_hook_register(&action_4, test_dispose_hook);
+    __dispose_hook_register(&action_5, test_dispose_hook);
 
-    assert(disposable == &r5);
-    assert((disposable = disposable->_next) == &r4);
-    assert((disposable = disposable->_next) == &r3);
-    assert((disposable = disposable->_next) == &r2);
-    assert((disposable = disposable->_next) == &r1);
+    disposable = init_process._resource_list;
+
+    assert(disposable == (Disposable_t *) &action_5);
+    assert((disposable = disposable->_next) == (Disposable_t *) &action_4);
+    assert((disposable = disposable->_next) == (Disposable_t *) &action_3);
+    assert((disposable = disposable->_next) == (Disposable_t *) &action_2);
+    assert((disposable = disposable->_next) == (Disposable_t *) &action_1);
 
     // --- dispose list head ---
     dispose_hook_called = false;
 
-    dispose(&r5);
+    dispose(&action_5);
 
     assert(dispose_hook_called);
 
-    for (disposable = pcb._resource_list, resource_list_length = 0; disposable; disposable = disposable->_next, resource_list_length++) {
-        assert_not(disposable == &r5);
+    for (disposable = init_process._resource_list, resource_list_length = 0; disposable;
+                disposable = disposable->_next, resource_list_length++) {
+
+        assert_not(disposable == (Disposable_t *) &action_5);
     }
 
     assert(resource_list_length == 4);
@@ -55,19 +57,21 @@ void test_driver_disposable_resource() {
     // --- dispose resource, that is not on owner list ---
     dispose_hook_called = false;
 
-    dispose(&r5);
+    dispose(&action_5);
 
     assert_not(dispose_hook_called);
 
     // --- dispose list tail ---
     dispose_hook_called = false;
 
-    dispose(&r1);
+    dispose(&action_1);
 
     assert(dispose_hook_called);
 
-    for (disposable = pcb._resource_list, resource_list_length = 0; disposable; disposable = disposable->_next, resource_list_length++) {
-        assert_not(disposable == &r1);
+    for (disposable = init_process._resource_list, resource_list_length = 0; disposable;
+                disposable = disposable->_next, resource_list_length++) {
+
+        assert_not(disposable == (Disposable_t *) &action_1);
     }
 
     assert(resource_list_length == 3);
@@ -75,19 +79,21 @@ void test_driver_disposable_resource() {
     // --- dispose resource, that is not on owner list ---
     dispose_hook_called = false;
 
-    dispose(&r1);
+    dispose(&action_1);
 
     assert_not(dispose_hook_called);
 
     // --- dispose list middle resource ---
     dispose_hook_called = false;
 
-    dispose(&r3);
+    dispose(&action_3);
 
     assert(dispose_hook_called);
 
-    for (disposable = pcb._resource_list, resource_list_length = 0; disposable; disposable = disposable->_next, resource_list_length++) {
-        assert_not(disposable == &r3);
+    for (disposable = init_process._resource_list, resource_list_length = 0; disposable;
+                disposable = disposable->_next, resource_list_length++) {
+
+        assert_not(disposable == (Disposable_t *) &action_3);
     }
 
     assert(resource_list_length == 2);
@@ -95,14 +101,14 @@ void test_driver_disposable_resource() {
     // --- dispose resource, that is not on owner list ---
     dispose_hook_called = false;
 
-    dispose(&r3);
+    dispose(&action_3);
 
     assert_not(dispose_hook_called);
 
     // --- dispose remaining resources ---
     resource_list_expected_length = 2;
 
-    while ((disposable = pcb._resource_list)) {
+    while ((disposable = init_process._resource_list)) {
         dispose_hook_called = false;
 
         dispose(disposable);
@@ -117,7 +123,7 @@ void test_driver_disposable_resource() {
 
         assert_not(dispose_hook_called);
 
-        for (disposable = pcb._resource_list, resource_list_length = 0; disposable;
+        for (disposable = init_process._resource_list, resource_list_length = 0; disposable;
              disposable = disposable->_next, resource_list_length++);
 
 

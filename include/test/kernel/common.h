@@ -13,14 +13,16 @@
 #include <defs.h>
 #include <action.h>
 #include <action/queue.h>
+#include <event.h>
 #include <process.h>
+#include <subscription.h>
 #include <sync/semaphore.h>
 #include <sync/mutex.h>
 #include <time.h>
 
 // -------------------------------------------------------------------------------------
 
-#define __TEST_STACK_SIZE__         0x8E
+#define __TEST_STACK_SIZE__         0xBE
 
 // -------------------------------------------------------------------------------------
 
@@ -47,6 +49,9 @@ extern Action_t action_4;
 extern Action_t action_5;
 
 extern Action_queue_t action_queue_1;
+extern Action_queue_t action_queue_2;
+extern Action_queue_t action_queue_3;
+extern Action_queue_t action_queue_4;
 
 // -------------------------------------------------------------------------------------
 
@@ -61,6 +66,14 @@ extern Semaphore_t semaphore_2;
 
 extern Mutex_t mutex_1;
 extern Mutex_t mutex_2;
+
+// -------------------------------------------------------------------------------------
+
+extern Event_t event_1;
+extern Event_t event_2;
+
+extern Subscription_t subscription_1;
+extern Subscription_t subscription_2;
 
 // -------------------------------------------------------------------------------------
 

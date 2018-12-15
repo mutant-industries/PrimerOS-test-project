@@ -8,10 +8,10 @@
 #include <sync/mutex.h>
 
 
-#define __INIT_PROCESS_PRIORITY__               1
+#define __INIT_PROCESS_PRIORITY__               0
 #define __TEST_PROCESS_1_PRIORITY__             0
 #define __TEST_PROCESS_2_PRIORITY__             0
-#define __TEST_PROCESS_2_PRIORITY_SHIFT__       2
+#define __TEST_PROCESS_2_PRIORITY_SHIFT__       1
 
 #define __TEST_SIGNAL__                         signal(0xA5A5)
 #define __TEST_PROCESS_1_RETURN_SIGNAL__        signal(0xA0A0)
@@ -36,9 +36,11 @@ static volatile bool process_2_mutex_acquired;
 
 static void init() {
     // initialize action queue where two processes shall be placed after initialized
-    action_queue_init(&action_queue_1, true);
+    action_queue_create(&action_queue_1, true, true);
     // initialize action proxy, that shall schedule both processes
-    action_register(&action_1, NULL, barrier_trigger, NULL, &action_queue_1, NULL);
+    action_create(&action_1, NULL, barrier_trigger);
+
+    action_attr(&action_1, _action_queue_attr) = &action_queue_1;
     // initialize test semaphore
     semaphore_register(&semaphore_1, 0);
     // initialize test mutex
@@ -72,8 +74,8 @@ static void init() {
     process_create(&process_2);
 
     // place both processes to test queue
-    enqueue(&process_1, &action_queue_1);
-    enqueue(&process_2, &action_queue_1);
+    action_queue_insert(&action_queue_1, &process_1);
+    action_queue_insert(&action_queue_1, &process_2);
 }
 
 void test_kernel_sync_barrier() {
@@ -90,10 +92,6 @@ void test_kernel_sync_barrier() {
 
     // --- test semaphore signal, both processes should be scheduled ---
     semaphore_signal(&semaphore_1, __TEST_SIGNAL__);
-
-    assert_not(process_1_started || process_2_started);
-
-    yield();
 
     assert_not(process_1_started || process_2_started);
 
@@ -174,7 +172,7 @@ static signal_t test_process_2_entry_point(Semaphore_t *semaphore, Mutex_t *mute
     // --- test blocking state on semaphore with priority shift ---
     assert(semaphore_acquire(semaphore, &(Schedule_config_t){__TEST_PROCESS_2_PRIORITY_SHIFT__}) == __TEST_SIGNAL__); // -> context switch
 
-    assert(sorted_queue_item_priority(running_process) == __TEST_PROCESS_2_PRIORITY_SHIFT__);
+    assert(sorted_set_item_priority(running_process) == __TEST_PROCESS_2_PRIORITY_SHIFT__);
 
     // --- test terminate without releasing lock ---
     return __TEST_PROCESS_2_RETURN_SIGNAL__;
@@ -184,5 +182,5 @@ static signal_t test_process_2_entry_point(Semaphore_t *semaphore, Mutex_t *mute
 
 static void barrier_trigger(Action_t *_this, signal_t signal) {
     // simple action proxy that triggers queue
-    action_queue_trigger_all(action_queue(_this->_action_queue_attr), signal);
+    action_queue_trigger_all(action_queue(action_attr(_this, _action_queue_attr)), signal);
 }

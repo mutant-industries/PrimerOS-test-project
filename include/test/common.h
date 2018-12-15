@@ -17,6 +17,14 @@
 #define assert(condition) if ( ! (condition)) test_fail()
 #define assert_not(condition) if (condition) test_fail()
 
+/**
+ * Resource variable attribute - to allocate to FRAM place following to linker script:
+ *  .resources  : {} > FRAM
+ */
+#define __resource \
+    __attribute__((section(".resources")))
+
+
 void test_fail(void);
 void test_pass(void);
 void expect_reset(void);

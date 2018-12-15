@@ -6,43 +6,54 @@
 
 // -------------------------------------------------------------------------------------
 
-Timer_channel_handle_us_convertible_t context_switch_handle;
-Timer_channel_handle_us_convertible_t timing_handle;
+__resource Timer_channel_handle_us_convertible_t context_switch_handle;
+__resource Timer_channel_handle_us_convertible_t timing_handle;
 
 // -------------------------------------------------------------------------------------
 
-Process_control_block_t init_process;
-Process_control_block_t process_1;
-Process_control_block_t process_2;
+__resource Process_control_block_t init_process;
+__resource Process_control_block_t process_1;
+__resource Process_control_block_t process_2;
 
 // -------------------------------------------------------------------------------------
 
-uint8_t test_stack_1[__TEST_STACK_SIZE__];
-uint8_t test_stack_2[__TEST_STACK_SIZE__];
+__resource uint8_t test_stack_1[__TEST_STACK_SIZE__];
+__resource uint8_t test_stack_2[__TEST_STACK_SIZE__];
 
 // -------------------------------------------------------------------------------------
 
-Action_t action_1;
-Action_t action_2;
-Action_t action_3;
-Action_t action_4;
-Action_t action_5;
+__resource Action_t action_1;
+__resource Action_t action_2;
+__resource Action_t action_3;
+__resource Action_t action_4;
+__resource Action_t action_5;
 
-Action_queue_t action_queue_1;
-
-// -------------------------------------------------------------------------------------
-
-Schedule_config_t init_process_schedule_config;
-Schedule_config_t process_1_schedule_config;
-Schedule_config_t process_2_schedule_config;
+__resource Action_queue_t action_queue_1;
+__resource Action_queue_t action_queue_2;
+__resource Action_queue_t action_queue_3;
+__resource Action_queue_t action_queue_4;
 
 // -------------------------------------------------------------------------------------
 
-Semaphore_t semaphore_1;
-Semaphore_t semaphore_2;
+__resource Schedule_config_t init_process_schedule_config;
+__resource Schedule_config_t process_1_schedule_config;
+__resource Schedule_config_t process_2_schedule_config;
 
-Mutex_t mutex_1;
-Mutex_t mutex_2;
+// -------------------------------------------------------------------------------------
+
+__resource Semaphore_t semaphore_1;
+__resource Semaphore_t semaphore_2;
+
+__resource Mutex_t mutex_1;
+__resource Mutex_t mutex_2;
+
+// -------------------------------------------------------------------------------------
+
+__resource Event_t event_1;
+__resource Event_t event_2;
+
+__resource Subscription_t subscription_1;
+__resource Subscription_t subscription_2;
 
 // -------------------------------------------------------------------------------------
 
