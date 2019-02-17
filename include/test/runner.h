@@ -30,7 +30,7 @@
 
 
 /**
- * Test framework entry point, might also be user as main entry point
+ * Test framework entry point, might also be used as main entry point
  *  1. run single test
  *  2. restart
  *  3. check that previous test did not crash (executed test count == passed test count)

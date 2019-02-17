@@ -30,7 +30,7 @@ static void init() {
 void test_kernel_queue_sorting() {
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     test_action_trigger_call_count = test_dispose_hook_call_count = 0;
     last_priority_change = 0;

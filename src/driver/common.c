@@ -12,7 +12,8 @@ __resource Vector_handle_t vector;
 // -------------------------------------------------------------------------------------
 
 __resource Timer_config_t timer_config;
-__resource Timer_driver_t timer_driver;
+__resource Timer_driver_t timer_driver_1;
+__resource Timer_driver_t timer_driver_2;
 
 __resource Timer_channel_handle_t main_handle;
 __resource Timer_channel_handle_t shared_handle_1;
@@ -30,7 +31,7 @@ void default_timer_init(Timer_driver_t *driver, Timer_channel_handle_t *main_han
 
     Timer_config_t config;
 
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     uint8_t main_vector_no = TIMER_A_VECTOR(__TEST_TIMER_NO__, TIMER_VECTOR_MAIN);
     uint8_t shared_vector_no = TIMER_A_VECTOR(__TEST_TIMER_NO__, TIMER_VECTOR_SHARED);

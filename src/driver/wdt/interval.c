@@ -22,7 +22,7 @@ void test_driver_wdt_interval() {
     test_ISR_call_count = 0;
 
     WDT_hold();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     vector_handle_register(&vector, NULL, WDT_VECTOR, (uint16_t) &SFRIE1, WDTIE, (uint16_t) &SFRIFG1, WDTIFG);
 

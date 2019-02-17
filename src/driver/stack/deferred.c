@@ -44,7 +44,7 @@ void test_driver_stack_deferred() {
     param_test_called = false;
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     stack_save_context(&backup);
 

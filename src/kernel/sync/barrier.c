@@ -35,14 +35,16 @@ static volatile bool process_2_mutex_acquired;
 // -------------------------------------------------------------------------------------
 
 static void init() {
+
+#ifndef __SIGNAL_PROCESSOR_DISABLE__
     // initialize action queue where two processes shall be placed after initialized
-    action_queue_create(&action_queue_1, true, true);
+    action_queue_create(&action_queue_1, true);
     // initialize action proxy, that shall schedule both processes
     action_create(&action_1, NULL, barrier_trigger);
 
     action_attr(&action_1, _action_queue_attr) = &action_queue_1;
     // initialize test semaphore
-    semaphore_register(&semaphore_1, 0);
+    semaphore_create(&semaphore_1, 0);
     // initialize test mutex
     mutex_register(&mutex_1);
 
@@ -76,10 +78,13 @@ static void init() {
     // place both processes to test queue
     action_queue_insert(&action_queue_1, &process_1);
     action_queue_insert(&action_queue_1, &process_2);
+
+#endif
 }
 
 void test_kernel_sync_barrier() {
 
+#ifndef __SIGNAL_PROCESSOR_DISABLE__
     WDT_disable();
 
     process_1_started = process_2_started = false;
@@ -96,7 +101,7 @@ void test_kernel_sync_barrier() {
     assert_not(process_1_started || process_2_started);
 
     // --- start test ---
-    assert(process_wait(&process_1, NULL) == __TEST_PROCESS_1_RETURN_SIGNAL__);
+    assert(process_wait(&process_1) == __TEST_PROCESS_1_RETURN_SIGNAL__);
 
     assert(process_1_started && process_2_started);
 
@@ -104,7 +109,7 @@ void test_kernel_sync_barrier() {
     semaphore_signal(&semaphore_1, __TEST_SIGNAL__);
 
     // --- test priority shift, process_2 should be terminated by now ---
-    assert(process_wait(&process_2, NULL) == PROCESS_SIGNAL_EXIT);
+    assert(process_wait(&process_2) == PROCESS_SIGNAL_EXIT);
 
     // --- test mutex has no owner ---
     assert( ! mutex_try_lock(&mutex_1));
@@ -112,7 +117,9 @@ void test_kernel_sync_barrier() {
     // kernel halt
     dispose(&init_process);
     // driver release
-    dispose(&timer_driver);
+    dispose(&timer_driver_1);
+
+#endif
 }
 
 static signal_t test_process_1_entry_point(Semaphore_t *semaphore, Mutex_t *mutex) {
@@ -170,7 +177,7 @@ static signal_t test_process_2_entry_point(Semaphore_t *semaphore, Mutex_t *mute
     process_2_mutex_acquired = true;
 
     // --- test blocking state on semaphore with priority shift ---
-    assert(semaphore_acquire(semaphore, &(Schedule_config_t){__TEST_PROCESS_2_PRIORITY_SHIFT__}) == __TEST_SIGNAL__); // -> context switch
+    assert(semaphore_acquire(semaphore, NULL, &(Schedule_config_t){__TEST_PROCESS_2_PRIORITY_SHIFT__}) == __TEST_SIGNAL__); // -> context switch
 
     assert(sorted_set_item_priority(running_process) == __TEST_PROCESS_2_PRIORITY_SHIFT__);
 

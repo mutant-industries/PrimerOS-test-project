@@ -42,8 +42,8 @@ void test_kernel_sync_inversion() {
     process_1_started = process_2_started = false;
     process_1_mutex_acquired = process_2_mutex_acquired = false;
 
-    zerofill(&init_process_schedule_config);
-    zerofill(&process_1_schedule_config);
+    schedule_config_reset(&init_process_schedule_config);
+    schedule_config_reset(&process_1_schedule_config);
 
     // --- create and schedule process from current context ---
     default_kernel_start(0, init, false);
@@ -123,7 +123,7 @@ void test_kernel_sync_inversion() {
     process_1_schedule_config.priority = 4;
 
     // --- test lock with schedule config ---
-    assert( ! mutex_lock(&mutex_1, &init_process_schedule_config));
+    assert( ! mutex_lock(&mutex_1, NULL, &init_process_schedule_config));
 
     assert(sorted_set_item_priority(running_process) == 2);
 
@@ -164,7 +164,7 @@ void test_kernel_sync_inversion() {
     process_create(&process_2);
 
     // --- test release lock and keep requested priority ---
-    assert( ! mutex_lock(&mutex_1, &init_process_schedule_config));
+    assert( ! mutex_lock(&mutex_1, NULL, &init_process_schedule_config));
 
     assert(sorted_set_item_priority(running_process) == 2);
 
@@ -198,7 +198,7 @@ void test_kernel_sync_inversion() {
     // kernel halt
     dispose(&init_process);
     // driver release
-    dispose(&timer_driver);
+    dispose(&timer_driver_1);
 }
 
 static signal_t test_process_1_entry_point(Mutex_t *mutex, Schedule_config_t *lock_with) {
@@ -208,7 +208,7 @@ static signal_t test_process_1_entry_point(Mutex_t *mutex, Schedule_config_t *lo
 
     assert(mutex == &mutex_1);
 
-    assert( ! mutex_lock(mutex, lock_with));
+    assert( ! mutex_lock(mutex, NULL, lock_with));
 
     process_1_mutex_acquired = true;
 
@@ -222,7 +222,7 @@ static signal_t test_process_2_entry_point(Mutex_t *mutex, Schedule_config_t *lo
 
     assert(mutex == &mutex_1);
 
-    assert( ! mutex_lock(mutex, lock_with));
+    assert( ! mutex_lock(mutex, NULL, lock_with));
 
     process_2_mutex_acquired = true;
 

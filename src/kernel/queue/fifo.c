@@ -10,7 +10,7 @@
 
 static bool test_action_handler(action_arg_t, action_arg_t);
 static dispose_function_t test_dispose_hook(Action_t *);
-static void test_action_released_hook(Action_queue_t *owner, Action_t *, Action_queue_t *origin);
+static void test_action_released_hook(Action_t *action, Action_queue_t *origin);
 
 static volatile uint16_t test_dispose_hook_call_count;
 static volatile uint16_t test_action_released_hook_call_count;
@@ -22,17 +22,22 @@ static volatile bool disable_expected_to_remove_check;
 void test_kernel_queue_fifo() {
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     test_dispose_hook_call_count = test_action_released_hook_call_count = 0;
     disable_expected_to_remove_check = false;
 
-    action_queue_create(&action_queue_1, false, false, &action_queue_1, NULL, test_action_released_hook);
+    action_queue_create(&action_queue_1, false, false);
 
     action_create(&action_1, (dispose_function_t) test_dispose_hook, action_default_trigger, test_action_handler);
     action_create(&action_2, (dispose_function_t) test_dispose_hook, action_default_trigger, test_action_handler);
     action_create(&action_3, (dispose_function_t) test_dispose_hook, action_default_trigger, test_action_handler);
     action_create(&action_4, (dispose_function_t) test_dispose_hook, action_default_trigger, test_action_handler);
+
+    action_on_released(&action_1) = test_action_released_hook;
+    action_on_released(&action_2) = test_action_released_hook;
+    action_on_released(&action_3) = test_action_released_hook;
+    action_on_released(&action_4) = test_action_released_hook;
 
     sorted_set_item_priority(&action_1) = 1;
     sorted_set_item_priority(&action_2) = 3;
@@ -115,6 +120,11 @@ void test_kernel_queue_fifo() {
     action_create(&action_3, (dispose_function_t) test_dispose_hook, action_default_trigger, test_action_handler);
     action_create(&action_4, (dispose_function_t) test_dispose_hook, action_default_trigger, test_action_handler);
 
+    action_on_released(&action_1) = test_action_released_hook;
+    action_on_released(&action_2) = test_action_released_hook;
+    action_on_released(&action_3) = test_action_released_hook;
+    action_on_released(&action_4) = test_action_released_hook;
+
     action_queue_insert(&action_queue_1, &action_1);
     action_queue_insert(&action_queue_1, &action_2);
     action_queue_insert(&action_queue_1, &action_3);
@@ -140,8 +150,7 @@ static dispose_function_t test_dispose_hook(Action_t *_) {
     return NULL;
 }
 
-static void test_action_released_hook(Action_queue_t *owner, Action_t *action, Action_queue_t *origin) {
-    assert(owner == &action_queue_1);
+static void test_action_released_hook(Action_t *action, Action_queue_t *origin) {
     assert(origin == &action_queue_1);
 
     if ( ! disable_expected_to_remove_check) {

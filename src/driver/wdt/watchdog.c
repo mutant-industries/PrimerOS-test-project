@@ -20,7 +20,7 @@
 
 void test_driver_wdt_watchdog() {
 
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     volatile uint8_t wdtctl_0_original = (uint8_t) WDTCTL;
     volatile uint8_t  wdtctl_0_current;

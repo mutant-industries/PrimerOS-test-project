@@ -50,7 +50,7 @@ void test_runner_all() {
         last_executed_test_id = last_passed_test_id = 0;
 
         WDT_disable();
-        default_clock_setup();
+        default_clock_setup(0, DCOFSEL_0, DIVM__1);
         IO_unlock();
         IO_red_led_off();
 

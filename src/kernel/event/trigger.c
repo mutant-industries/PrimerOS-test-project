@@ -32,8 +32,11 @@ static volatile bool handler_next_return_value, interceptor_next_return_value;
 // -------------------------------------------------------------------------------------
 
 static void init() {
+
+#ifndef __SIGNAL_PROCESSOR_DISABLE__
     // create test event to be executed within event processor
     event_create(&event_1);
+#endif
 
     // initialize both processes
     zerofill(&process_1.create_config);
@@ -59,6 +62,7 @@ static void init() {
 void test_kernel_event_trigger() {
     action_trigger_t event_dummy_trigger;
 
+#ifndef __SIGNAL_PROCESSOR_DISABLE__
     WDT_disable();
 
     process_1_started = process_2_started = false;
@@ -182,7 +186,8 @@ void test_kernel_event_trigger() {
     dispose(&init_process);
 #endif
     // driver release
-    dispose(&timer_driver);
+    dispose(&timer_driver_1);
+#endif
 }
 
 static signal_t test_process_1_entry_point() {
@@ -193,7 +198,7 @@ static signal_t test_process_1_entry_point() {
 
     event_subscribe(&event_1, &subscription_1);
 
-    wait();
+    signal_wait();
 
     process_1_wait_loop_ended = true;
 
@@ -211,7 +216,7 @@ static signal_t test_process_1_entry_point() {
 static signal_t test_process_2_entry_point() {
     process_2_started = true;
 
-    zerofill(&process_1_schedule_config);
+    schedule_config_reset(&process_1_schedule_config);
 
     process_1_schedule_config.priority = 1;
 
@@ -220,7 +225,7 @@ static signal_t test_process_2_entry_point() {
 
     event_subscribe(&event_1, &subscription_2);
 
-    wait();
+    signal_wait();
 
     process_2_wait_loop_ended = true;
 
@@ -228,7 +233,7 @@ static signal_t test_process_2_entry_point() {
     dispose(&subscription_2);
 
     // --- test event blocking wait ---
-    assert(event_wait(&event_1, &process_1_schedule_config) == __TEST_SIGNAL__);
+    assert(event_wait(&event_1, NULL, &process_1_schedule_config) == __TEST_SIGNAL__);
 
     process_2_event_blocking_wait_ended = true;
 

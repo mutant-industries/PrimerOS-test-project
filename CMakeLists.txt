@@ -10,7 +10,8 @@ endif()
 
 set(DEFINITIONS
         __${TARGET_MCU}__
-        __RESOURCE_MANAGEMENT_ENABLE__)
+        __RESOURCE_MANAGEMENT_ENABLE__
+        __TIMING_CONVERSION_AVOID_HW_MULTIPLICATION__)
 
 add_executable(PrimerOS-test-project
         src/runner.c
@@ -34,7 +35,8 @@ add_executable(PrimerOS-test-project
         src/kernel/sync/barrier.c
         src/kernel/sync/inversion.c
         src/kernel/event/trigger.c
-        src/kernel/event/inheritance.c)
+        src/kernel/event/inheritance.c
+        src/kernel/standalone/timing.c)
 
 target_include_directories(PrimerOS-test-project
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>

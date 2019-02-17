@@ -19,7 +19,8 @@ extern Vector_handle_t vector;
 // -------------------------------------------------------------------------------------
 
 extern Timer_config_t timer_config;
-extern Timer_driver_t timer_driver;
+extern Timer_driver_t timer_driver_1;
+extern Timer_driver_t timer_driver_2;
 
 extern Timer_channel_handle_t main_handle;
 extern Timer_channel_handle_t shared_handle_1;

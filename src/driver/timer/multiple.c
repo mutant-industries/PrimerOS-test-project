@@ -26,7 +26,7 @@ void test_driver_timer_multiple() {
     uint8_t i;
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     uint8_t main_vector_no = TIMER_A_VECTOR(__TEST_TIMER_NO__, TIMER_VECTOR_MAIN);
     uint8_t shared_vector_no = TIMER_A_VECTOR(__TEST_TIMER_NO__, TIMER_VECTOR_SHARED);
@@ -38,11 +38,11 @@ void test_driver_timer_multiple() {
 
     __enable_interrupt();
 
-    timer_driver_register(&timer_driver, &timer_config, TIMER_A_BASE(__TEST_TIMER_NO__), main_vector_no, shared_vector_no, 2);
+    timer_driver_register(&timer_driver_1, &timer_config, TIMER_A_BASE(__TEST_TIMER_NO__), main_vector_no, shared_vector_no, 2);
 
-    assert( ! timer_driver_channel_register(&timer_driver, &main_handle, MAIN, NULL)
-            && ! timer_driver_channel_register(&timer_driver, &shared_handle_1, SHARED, NULL)
-            && ! timer_driver_channel_register(&timer_driver, &overflow_handle, OVERFLOW, NULL));
+    assert( ! timer_driver_channel_register(&timer_driver_1, &main_handle, MAIN, NULL)
+            && ! timer_driver_channel_register(&timer_driver_1, &shared_handle_1, SHARED, NULL)
+            && ! timer_driver_channel_register(&timer_driver_1, &overflow_handle, OVERFLOW, NULL));
 
     assert(vector_register_handler(&main_handle, main_handle_interrupt_handler, &main_handle, NULL)
             && vector_register_handler(&shared_handle_1, shared_handle_interrupt_handler, &shared_handle_1, NULL)
@@ -58,7 +58,7 @@ void test_driver_timer_multiple() {
     // --- start overflow handle, do not expect interrupt on others ---
     assert( ! timer_channel_start(&overflow_handle));
 
-    while( ! overflow_handle_interrupt_handler_call_count);
+    while ( ! overflow_handle_interrupt_handler_call_count);
 
     assert( ! main_handle_interrupt_handler_call_count && ! shared_handle_interrupt_handler_call_count);
 
@@ -132,7 +132,7 @@ void test_driver_timer_multiple() {
 
     assert(timer_channel_reset(&main_handle) && timer_channel_reset(&overflow_handle));
 
-    while( ! overflow_handle_interrupt_handler_call_count);
+    while ( ! overflow_handle_interrupt_handler_call_count);
 
     assert(main_handle_interrupt_handler_call_count == 3 && !shared_handle_interrupt_handler_call_count
             && overflow_handle_interrupt_handler_call_count == 1);
@@ -224,7 +224,7 @@ void test_driver_timer_multiple() {
 
     assert(counter_prev == counter);
 
-    dispose(&timer_driver);
+    dispose(&timer_driver_1);
 }
 
 static void main_handle_interrupt_handler(Timer_channel_handle_t *handle) {

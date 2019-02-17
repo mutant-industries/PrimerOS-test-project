@@ -22,7 +22,7 @@ void test_kernel_dispose_chain() {
     dispose_hook_1_called = dispose_hook_2_called = false;
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     vector_handle_register(&vector, (dispose_function_t) test_dispose_hook_1, WDT_VECTOR,
                            (uint16_t) &SFRIE1, WDTIE, (uint16_t) &SFRIFG1, WDTIFG);

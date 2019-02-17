@@ -55,12 +55,12 @@ void test_kernel_process_lifecycle() {
     // --- test async action execution on process exit ---
     action_create(&action_1, NULL, test_process_exit_action_handler);
 
-    assert(process_register_exit_action(&process_1, &action_1));
+    assert(process_wait_for_async(&process_1, &action_1));
 
     // --- test execution order and exit code passing ---
     assert( ! test_process_executed && process_is_alive(&process_1));
 
-    return_value = process_wait(&process_1, NULL);
+    return_value = process_wait(&process_1);
 
     assert(test_process_executed && ! process_is_alive(&process_1));
 
@@ -69,7 +69,7 @@ void test_kernel_process_lifecycle() {
     assert(return_value == test_return_value);
 
     // --- test wait on disposed process ---
-    return_value = process_wait(&process_1, NULL);
+    return_value = process_wait(&process_1);
 
     assert(return_value == PROCESS_SIGNAL_EXIT);
 
@@ -78,7 +78,7 @@ void test_kernel_process_lifecycle() {
 
     assert_not(process_is_alive(&init_process));
 
-    dispose(&timer_driver);
+    dispose(&timer_driver_1);
 }
 
 static signal_t test_process_entry_point(signal_t arg) {

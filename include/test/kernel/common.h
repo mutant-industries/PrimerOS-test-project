@@ -26,8 +26,9 @@
 
 // -------------------------------------------------------------------------------------
 
-extern Timer_channel_handle_us_convertible_t context_switch_handle;
-extern Timer_channel_handle_us_convertible_t timing_handle;
+extern Timing_handle_t context_switch_handle;
+extern Timing_handle_t timing_handle_1;
+extern Timing_handle_t timing_handle_2;
 
 // -------------------------------------------------------------------------------------
 
@@ -74,6 +75,14 @@ extern Event_t event_2;
 
 extern Subscription_t subscription_1;
 extern Subscription_t subscription_2;
+
+// -------------------------------------------------------------------------------------
+
+extern Timed_signal_t timed_signal_1;
+extern Timed_signal_t timed_signal_2;
+
+extern Schedule_config_t timed_signal_1_schedule_config;
+extern Schedule_config_t timed_signal_2_schedule_config;
 
 // -------------------------------------------------------------------------------------
 

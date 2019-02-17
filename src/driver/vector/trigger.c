@@ -19,7 +19,7 @@ void test_driver_vector_trigger() {
     interrupt_handler_call_count = 0;
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     vector_handle_register(&vector, NULL, COMP_E_VECTOR, (uint16_t) &CEINT, CERDYIE, (uint16_t) &CEINT, CERDYIFG);
 

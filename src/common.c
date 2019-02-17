@@ -13,7 +13,7 @@ void test_fail() {
     volatile uint16_t i;
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
     IO_unlock();
 
     while (1) {
@@ -27,7 +27,7 @@ void test_pass() {
     volatile uint16_t i;
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
     IO_unlock();
 
     IO_red_led_off();
@@ -64,7 +64,7 @@ void WDT_disable() {
     WDTCTL = WDTPW | WDTHOLD | (WDTCTL & (WDTSSEL | WDTTMSEL | WDTIS));
 }
 
-void default_clock_setup() {
+void default_clock_setup(uint16_t DCO_range_select, uint16_t DCO_frequency_select, uint16_t SMCLK_divider) {
 
     volatile uint16_t clockSource;
     volatile uint16_t clockSourceDivider;
@@ -72,8 +72,8 @@ void default_clock_setup() {
 
     // -------------------------------------------------------------------------
     // Set DCO frequency to 1 MHz
-    uint16_t dcorsel = DCORSEL & 0x00;
-    uint16_t dcofsel = DCOFSEL_0;
+    uint16_t dcorsel = DCO_range_select;
+    uint16_t dcofsel = DCO_frequency_select;
 
     uint16_t tempCSCTL3 = 0;
     // Unlock CS control register
@@ -92,7 +92,7 @@ void default_clock_setup() {
     CSCTL1 = (dcorsel + dcofsel);
 
     // Delay by ~10us to let DCO settle. cycles to wait = 20 cycles buffer + (10us * (x MHz/4))
-    __delay_cycles(23);
+    __delay_cycles(180);
 
     // Set all dividers
     CSCTL3 = tempCSCTL3;
@@ -111,7 +111,7 @@ void default_clock_setup() {
     // -------------------------------------------------------------------------
     // Set SMCLK = DCO with frequency divider of 1
     clockSource = SELM__DCOCLK;
-    clockSourceDivider = DIVM__1;
+    clockSourceDivider = SMCLK_divider;
 
     temp = CSCTL3;
 
@@ -134,7 +134,7 @@ void default_clock_setup() {
 
     CSCTL2 &= ~(SELA_7);
     CSCTL2 |= clockSource;
-    CSCTL3 = (temp & ~(DIVS0 | DIVS1 | DIVS2)) | clockSourceDivider;
+    CSCTL3 = (temp & ~(DIVA0 | DIVA1 | DIVA2)) | clockSourceDivider;
 
     // Lock CS control register
     CSCTL0_H = 0x00;

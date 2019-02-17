@@ -21,7 +21,7 @@ void test_kernel_dispose_resource() {
     running_process = &init_process;
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     init_process._resource_list = NULL;
 

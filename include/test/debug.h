@@ -71,8 +71,12 @@
  * Debug signal ports
  */
 #define DEBUG_PORT                      PORT_P3
-#define DEBUG_PIN_1                     PIN2
-#define DEBUG_PIN_2                     PIN3
+#define DEBUG_PIN_1                     PIN0
+#define DEBUG_PIN_2                     PIN1
+#define DEBUG_PIN_3                     PIN2
+#define DEBUG_PIN_4                     PIN3
+#define DEBUG_PIN_5                     PIN4
+#define DEBUG_PIN_6                     PIN5
 
 // --------------------------------------------------------------------------------------
 
@@ -90,8 +94,8 @@
 #define IO_debug_init() \
     PORT_REG_OUT(LED_PORT) &= ~(RED_LED_PIN | GREEN_LED_PIN); \
     PORT_REG_DIR(LED_PORT) |= (RED_LED_PIN | GREEN_LED_PIN); \
-    PORT_REG_OUT(DEBUG_PORT) &= ~(DEBUG_PIN_1 | DEBUG_PIN_2); \
-    PORT_REG_DIR(DEBUG_PORT) |= DEBUG_PIN_1 | DEBUG_PIN_2;
+    PORT_REG_OUT(DEBUG_PORT) &= ~(DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5 | DEBUG_PIN_6); \
+    PORT_REG_DIR(DEBUG_PORT) |= DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5 | DEBUG_PIN_6;
 
 #define IO_green_led_on() \
         PORT_REG_OUT(LED_PORT) |= GREEN_LED_PIN;
@@ -113,12 +117,59 @@
         PORT_REG_OUT(LED_PORT) ^= RED_LED_PIN;
 
 
+#define IO_debug_pin_1_set() \
+        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_1;
+
+#define IO_debug_pin_1_reset() \
+        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_1;
+
 #define IO_debug_pin_1_toggle() \
         PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_1;
+
+#define IO_debug_pin_2_set() \
+        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_2;
+
+#define IO_debug_pin_2_reset() \
+        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_2;
 
 #define IO_debug_pin_2_toggle() \
         PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_2;
 
+#define IO_debug_pin_3_set() \
+        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_3;
+
+#define IO_debug_pin_3_reset() \
+        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_3;
+
+#define IO_debug_pin_3_toggle() \
+        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_3;
+
+#define IO_debug_pin_4_set() \
+        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_4;
+
+#define IO_debug_pin_4_reset() \
+        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_4;
+
+#define IO_debug_pin_4_toggle() \
+        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_4;
+
+#define IO_debug_pin_5_set() \
+        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_5;
+
+#define IO_debug_pin_5_reset() \
+        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_5;
+
+#define IO_debug_pin_5_toggle() \
+        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_5;
+
+#define IO_debug_pin_6_set() \
+        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_6;
+
+#define IO_debug_pin_6_reset() \
+        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_6;
+
+#define IO_debug_pin_6_toggle() \
+        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_6;
 
 // --------------------------------------------------------------------------------------
 

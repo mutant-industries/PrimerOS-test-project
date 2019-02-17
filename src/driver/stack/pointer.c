@@ -18,7 +18,7 @@ volatile void *__SP__;
 void test_driver_stack_pointer() {
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     read_SP();
 

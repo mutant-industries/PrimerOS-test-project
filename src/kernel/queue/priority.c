@@ -45,7 +45,7 @@ static void init() {
 void test_kernel_queue_priority() {
 
     WDT_disable();
-    default_clock_setup();
+    default_clock_setup(0, DCOFSEL_0, DIVM__1);
 
     process_1_executed = false;
 

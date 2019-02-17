@@ -18,6 +18,8 @@ static signal_t action_1_expected_signal;
 // -------------------------------------------------------------------------------------
 
 static void init() {
+
+#ifndef __SIGNAL_PROCESSOR_DISABLE__
     // create test event to be executed within event processor
     event_create(&event_1);
     event_create(&event_2);
@@ -42,10 +44,13 @@ static void init() {
 
     event_subscribe(&event_2, &action_3);
     event_subscribe(&event_2, &action_4);
+
+#endif
 }
 
 void test_kernel_event_inheritance() {
 
+#ifndef __SIGNAL_PROCESSOR_DISABLE__
     WDT_disable();
 
     action_1_triggered = action_2_triggered = action_3_triggered = action_4_triggered = false;
@@ -136,6 +141,8 @@ void test_kernel_event_inheritance() {
     dispose(&event_1);
 
     assert(action_1_triggered);
+
+#endif
 }
 
 static bool test_action_1_handler(Action_t *owner, signal_t signal) {

@@ -6,8 +6,9 @@
 
 // -------------------------------------------------------------------------------------
 
-__resource Timer_channel_handle_us_convertible_t context_switch_handle;
-__resource Timer_channel_handle_us_convertible_t timing_handle;
+__resource Timing_handle_t context_switch_handle;
+__resource Timing_handle_t timing_handle_1;
+__resource Timing_handle_t timing_handle_2;
 
 // -------------------------------------------------------------------------------------
 
@@ -57,10 +58,22 @@ __resource Subscription_t subscription_2;
 
 // -------------------------------------------------------------------------------------
 
+__resource Timed_signal_t timed_signal_1;
+__resource Timed_signal_t timed_signal_2;
+
+__resource Schedule_config_t timed_signal_1_schedule_config;
+__resource Schedule_config_t timed_signal_2_schedule_config;
+
+// -------------------------------------------------------------------------------------
+
 void default_kernel_start(priority_t init_process_priority, void (*sys_init)(void), bool wakeup) {
 
-    default_timer_init(&timer_driver, _timer_channel_handle_(&context_switch_handle), _timer_channel_handle_(&timing_handle), NULL);
+    default_timer_init(&timer_driver_1, _timer_channel_handle_(&context_switch_handle), _timer_channel_handle_(&timing_handle_1), NULL);
+
+    timing_handle_1.usecs_to_ticks = NULL;
+    timing_handle_1.ticks_to_usecs = NULL;
+    timing_handle_1.timer_counter_bit_width = 16;
 
     assert( ! kernel_start(&init_process, init_process_priority, sys_init,
-                         wakeup, (Context_switch_handle_t *) &context_switch_handle, &timing_handle));
+                         wakeup, (Context_switch_handle_t *) &context_switch_handle, &timing_handle_1));
 }
