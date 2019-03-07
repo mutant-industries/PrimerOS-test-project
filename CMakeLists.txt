@@ -11,6 +11,7 @@ endif()
 set(DEFINITIONS
         __${TARGET_MCU}__
         __RESOURCE_MANAGEMENT_ENABLE__
+        __WAKEUP_EVENT_ENABLE__
         __TIMING_CONVERSION_AVOID_HW_MULTIPLICATION__)
 
 add_executable(PrimerOS-test-project
@@ -23,6 +24,7 @@ add_executable(PrimerOS-test-project
         src/driver/vector/trigger.c
         src/driver/timer/dispose.c
         src/driver/timer/multiple.c
+        src/driver/io/handler.c
         src/driver/stack/pointer.c
         src/driver/stack/deferred.c
         src/kernel/common.c
@@ -36,7 +38,8 @@ add_executable(PrimerOS-test-project
         src/kernel/sync/inversion.c
         src/kernel/event/trigger.c
         src/kernel/event/inheritance.c
-        src/kernel/standalone/timing.c)
+        src/kernel/standalone/timing.c
+        src/kernel/standalone/wakeup.c)
 
 target_include_directories(PrimerOS-test-project
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>

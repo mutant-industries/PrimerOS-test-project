@@ -50,7 +50,7 @@ void test_kernel_queue_priority() {
     process_1_executed = false;
 
     // just for running process to be set, process local storage is required
-    default_kernel_start(0, init, false);
+    default_kernel_start(&init_process, 0, init, false);
 
     assert_not(process_1_executed);
 

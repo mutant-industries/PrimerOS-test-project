@@ -23,6 +23,22 @@ __resource Timer_channel_handle_t dummy_handle;
 
 // -------------------------------------------------------------------------------------
 
+__resource IO_port_driver_t IO_port_driver_1;
+__resource IO_port_driver_t IO_port_driver_2;
+__resource IO_port_driver_t IO_port_driver_3;
+__resource IO_port_driver_t IO_port_driver_4;
+
+__resource IO_pin_handle_t IO_pin_handle_1;
+__resource IO_pin_handle_t IO_pin_handle_2;
+__resource IO_pin_handle_t IO_pin_handle_3;
+__resource IO_pin_handle_t IO_pin_handle_4;
+__resource IO_pin_handle_t IO_pin_handle_5;
+__resource IO_pin_handle_t IO_pin_handle_6;
+__resource IO_pin_handle_t IO_pin_handle_7;
+__resource IO_pin_handle_t IO_pin_handle_8;
+
+// -------------------------------------------------------------------------------------
+
 #define __TEST_TIMER_NO__           1
 
 

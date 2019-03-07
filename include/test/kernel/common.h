@@ -86,7 +86,7 @@ extern Schedule_config_t timed_signal_2_schedule_config;
 
 // -------------------------------------------------------------------------------------
 
-void default_kernel_start(priority_t init_process_priority, void (*sys_init)(void), bool wakeup);
+void default_kernel_start(Process_control_block_t *init_process, priority_t init_process_priority, void (*sys_init)(void), bool wakeup);
 
 
 #endif /* _TEST_KERNEL_COMMON_H_ */

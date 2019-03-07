@@ -66,7 +66,7 @@ void test_kernel_standalone_timing() {
     WDT_disable();
 
     IO_debug_init();
-    IO_unlock();
+    IO_debug_unlock();
 
     bool alternative_handle = false;
     process_1_started = false;

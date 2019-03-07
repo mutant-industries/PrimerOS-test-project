@@ -29,6 +29,7 @@ void test_fail(void);
 void test_pass(void);
 void expect_reset(void);
 void power_on_reset(void);
+void LPM_x_5_enter(void);
 
 void WDT_disable(void);
 

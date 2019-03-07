@@ -14,7 +14,7 @@ void test_fail() {
 
     WDT_disable();
     default_clock_setup(0, DCOFSEL_0, DIVM__1);
-    IO_unlock();
+    IO_debug_unlock();
 
     while (1) {
         IO_red_led_toggle();
@@ -28,7 +28,7 @@ void test_pass() {
 
     WDT_disable();
     default_clock_setup(0, DCOFSEL_0, DIVM__1);
-    IO_unlock();
+    IO_debug_unlock();
 
     IO_red_led_off();
     IO_green_led_on();
@@ -46,7 +46,7 @@ void expect_reset(void) {
 
     last_passed_test_id++;
 
-    IO_unlock();
+    IO_debug_unlock();
     IO_green_led_on();
     IO_red_led_off();
 
@@ -144,4 +144,18 @@ void power_on_reset() {
     PMMCTL0_H = PMMPW_H;
     PMMCTL0 |= PMMSWPOR;
     PMMCTL0_H = 0x00;
+}
+
+void LPM_x_5_enter() {
+
+    WDT_disable();
+
+    _disable_interrupts();
+
+    *((volatile uint8_t *)((uint16_t) (PMM_BASE + OFS_PMMCTL0_H))) = PMMPW_H;
+    *((volatile uint8_t *)((uint16_t) (PMM_BASE + OFS_PMMCTL0))) |= PMMREGOFF;
+    *((volatile uint8_t *)((uint16_t) (PMM_BASE + OFS_PMMCTL0_L))) &= ~SVSHE;
+    *((volatile uint8_t *)((uint16_t) (PMM_BASE + OFS_PMMCTL0_H))) = 0x00;
+
+    LPM4;
 }

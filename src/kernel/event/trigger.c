@@ -60,7 +60,6 @@ static void init() {
 }
 
 void test_kernel_event_trigger() {
-    action_trigger_t event_dummy_trigger;
 
 #ifndef __SIGNAL_PROCESSOR_DISABLE__
     WDT_disable();
@@ -73,9 +72,7 @@ void test_kernel_event_trigger() {
     handler_next_return_value = interceptor_next_return_value = true;
 
     // --- create and schedule process from current context ---
-    default_kernel_start(0, init, false);
-
-    event_dummy_trigger = action(&event_1)->trigger;
+    default_kernel_start(&init_process, 0, init, false);
 
     process_schedule(&process_1, 0);
     process_schedule(&process_2, 0);
@@ -87,9 +84,6 @@ void test_kernel_event_trigger() {
     assert(process_1_started && process_2_started);
     assert( ! test_subscription_1_on_publish_handler_call_count);
     assert( ! test_subscription_2_on_publish_handler_call_count);
-
-    // --- test event triggerable ---
-    assert_not(action(&event_1)->trigger == event_dummy_trigger);
 
     // --- test signal pass ---
     event_trigger(&event_1, __TEST_SIGNAL__);
@@ -177,9 +171,6 @@ void test_kernel_event_trigger() {
     yield();
 
     assert(process_1_event_blocking_wait_ended);
-
-    // --- test event no longer triggerable when subscription list is empty ---
-    assert(action(&event_1)->trigger == event_dummy_trigger);
 
 #ifdef __RESOURCE_MANAGEMENT_ENABLE__
     // kernel halt - only if resource management is enabled, otherwise event processor is not terminated

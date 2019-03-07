@@ -46,7 +46,7 @@ void test_kernel_sync_inversion() {
     schedule_config_reset(&process_1_schedule_config);
 
     // --- create and schedule process from current context ---
-    default_kernel_start(0, init, false);
+    default_kernel_start(&init_process, 0, init, false);
 
     process_1.create_config.priority = 1;
     process_2.create_config.priority = 2;

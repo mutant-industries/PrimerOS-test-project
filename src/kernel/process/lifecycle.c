@@ -50,7 +50,7 @@ void test_kernel_process_lifecycle() {
     test_process_executed = exit_action_executed = false;
 
     // --- create and schedule process from current context ---
-    default_kernel_start(__INIT_PROCESS_PRIORITY__, init, false);
+    default_kernel_start(&init_process, __INIT_PROCESS_PRIORITY__, init, false);
 
     // --- test async action execution on process exit ---
     action_create(&action_1, NULL, test_process_exit_action_handler);

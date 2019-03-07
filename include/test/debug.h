@@ -61,13 +61,6 @@
 #define GREEN_LED_PIN                   PIN1
 
 /**
- * Buttons
- */
-#define BUTTON_PORT                     PORT_P5
-#define BUTTON_S1_PIN                   PIN6
-#define BUTTON_S2_PIN                   PIN5
-
-/**
  * Debug signal ports
  */
 #define DEBUG_PORT                      PORT_P3
@@ -83,125 +76,105 @@
 /**
  * Disable the GPIO power-on default high-impedance mode
  */
-#define IO_unlock() \
+#define IO_debug_unlock() \
     PM5CTL0 &= ~LOCKLPM5;
 
 /**
  * - LED pins direction out, low
  * - debug pins direction out, low
- * - button pins direction in, pull-up resistor, interrupt edge high-to-low
  */
 #define IO_debug_init() \
-    PORT_REG_OUT(LED_PORT) &= ~(RED_LED_PIN | GREEN_LED_PIN); \
-    PORT_REG_DIR(LED_PORT) |= (RED_LED_PIN | GREEN_LED_PIN); \
-    PORT_REG_OUT(DEBUG_PORT) &= ~(DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5 | DEBUG_PIN_6); \
-    PORT_REG_DIR(DEBUG_PORT) |= DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5 | DEBUG_PIN_6;
+    _PORT_REG_OUT(LED_PORT) &= ~(RED_LED_PIN | GREEN_LED_PIN); \
+    _PORT_REG_DIR(LED_PORT) |= (RED_LED_PIN | GREEN_LED_PIN); \
+    _PORT_REG_OUT(DEBUG_PORT) &= ~(DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5 | DEBUG_PIN_6); \
+    _PORT_REG_DIR(DEBUG_PORT) |= DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5 | DEBUG_PIN_6;
 
 #define IO_green_led_on() \
-        PORT_REG_OUT(LED_PORT) |= GREEN_LED_PIN;
+        _PORT_REG_OUT(LED_PORT) |= GREEN_LED_PIN;
 
 #define IO_green_led_off() \
-        PORT_REG_OUT(LED_PORT) &= ~GREEN_LED_PIN;
+        _PORT_REG_OUT(LED_PORT) &= ~GREEN_LED_PIN;
 
 #define IO_green_led_toggle() \
-        PORT_REG_OUT(LED_PORT) ^= GREEN_LED_PIN;
+        _PORT_REG_OUT(LED_PORT) ^= GREEN_LED_PIN;
 
 
 #define IO_red_led_on() \
-        PORT_REG_OUT(LED_PORT) |= RED_LED_PIN;
+        _PORT_REG_OUT(LED_PORT) |= RED_LED_PIN;
 
 #define IO_red_led_off() \
-        PORT_REG_OUT(LED_PORT) &= ~RED_LED_PIN;
+        _PORT_REG_OUT(LED_PORT) &= ~RED_LED_PIN;
 
 #define IO_red_led_toggle() \
-        PORT_REG_OUT(LED_PORT) ^= RED_LED_PIN;
+        _PORT_REG_OUT(LED_PORT) ^= RED_LED_PIN;
 
 
 #define IO_debug_pin_1_set() \
-        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_1;
+        _PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_1;
 
 #define IO_debug_pin_1_reset() \
-        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_1;
+        _PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_1;
 
 #define IO_debug_pin_1_toggle() \
-        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_1;
+        _PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_1;
 
 #define IO_debug_pin_2_set() \
-        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_2;
+        _PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_2;
 
 #define IO_debug_pin_2_reset() \
-        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_2;
+        _PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_2;
 
 #define IO_debug_pin_2_toggle() \
-        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_2;
+        _PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_2;
 
 #define IO_debug_pin_3_set() \
-        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_3;
+        _PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_3;
 
 #define IO_debug_pin_3_reset() \
-        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_3;
+        _PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_3;
 
 #define IO_debug_pin_3_toggle() \
-        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_3;
+        _PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_3;
 
 #define IO_debug_pin_4_set() \
-        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_4;
+        _PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_4;
 
 #define IO_debug_pin_4_reset() \
-        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_4;
+        _PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_4;
 
 #define IO_debug_pin_4_toggle() \
-        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_4;
+        _PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_4;
 
 #define IO_debug_pin_5_set() \
-        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_5;
+        _PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_5;
 
 #define IO_debug_pin_5_reset() \
-        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_5;
+        _PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_5;
 
 #define IO_debug_pin_5_toggle() \
-        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_5;
+        _PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_5;
 
 #define IO_debug_pin_6_set() \
-        PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_6;
+        _PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_6;
 
 #define IO_debug_pin_6_reset() \
-        PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_6;
+        _PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_6;
 
 #define IO_debug_pin_6_toggle() \
-        PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_6;
+        _PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_6;
 
 // --------------------------------------------------------------------------------------
 
 // port base address
-#define PORT_BASE(NO)           ((uint8_t *) _PORT_BASE_EX_(NO))
+#define _PORT_BASE(NO)           ((uint8_t *) __PORT_BASE_EX__(NO))
+// ! following works only for odd port number !
 // input
-#define PORT_REG_IN(NO)         *((volatile uint8_t *) PORT_BASE(NO) + OFS_PAIN)
-// output when in output mode, input mode: 0b = pulldown selected, 1b = pullup selected
-#define PORT_REG_OUT(NO)        *((volatile uint8_t *) PORT_BASE(NO) + OFS_PAOUT)
+#define _PORT_REG_OUT(NO)        *((volatile uint8_t *) _PORT_BASE(NO) + OFS_PAOUT)
 // direction: 0b = input, 1b = output
-#define PORT_REG_DIR(NO)        *((volatile uint8_t *) PORT_BASE(NO) + OFS_PADIR)
-// resistor enable
-#define PORT_REG_REN(NO)        *((volatile uint8_t *) PORT_BASE(NO) + OFS_PAREN)
-// function select 0
-#define PORT_REG_SEL0(NO)       *((volatile uint8_t *) PORT_BASE(NO) + OFS_PASEL0)
-// function select 1
-#define PORT_REG_SEL1(NO)       *((volatile uint8_t *) PORT_BASE(NO) + OFS_PASEL1)
-// interrupt vector
-#define PORT_REG_IV(NO)         *((volatile uint8_t *) DIO_BASE + _OFS_IV_EX_(NO))
-// complement selection
-#define PORT_REG_SELC(NO)       *((volatile uint8_t *) PORT_BASE(NO) + OFS_PASELC)
-// interrupt edge select: 0b = low-to-high, 1b = high-to-low
-#define PORT_REG_IES(NO)        *((volatile uint8_t *) PORT_BASE(NO) + OFS_PAIES)
-// interrupt enable
-#define PORT_REG_IE(NO)         *((volatile uint8_t *) PORT_BASE(NO) + OFS_PAIE)
-// interrupt flags
-#define PORT_REG_IFG(NO)        *((volatile uint8_t *) PORT_BASE(NO) + OFS_PAIFG)
-
+#define _PORT_REG_DIR(NO)        *((volatile uint8_t *) _PORT_BASE(NO) + OFS_PADIR)
 
 // concatenation of expanded parameter
-#define _PORT_BASE_EX_(NO)      P## NO ##_BASE
-#define _OFS_IV_EX_(NO)         OFS_P## NO ##IV
+#define __PORT_BASE_EX__(NO)      P## NO ##_BASE
 
 // --------------------------------------------------------------------------------------
 

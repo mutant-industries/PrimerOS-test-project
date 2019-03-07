@@ -66,7 +66,7 @@ __resource Schedule_config_t timed_signal_2_schedule_config;
 
 // -------------------------------------------------------------------------------------
 
-void default_kernel_start(priority_t init_process_priority, void (*sys_init)(void), bool wakeup) {
+void default_kernel_start(Process_control_block_t *init_process, priority_t init_process_priority, void (*sys_init)(void), bool wakeup) {
 
     default_timer_init(&timer_driver_1, _timer_channel_handle_(&context_switch_handle), _timer_channel_handle_(&timing_handle_1), NULL);
 
@@ -74,6 +74,6 @@ void default_kernel_start(priority_t init_process_priority, void (*sys_init)(voi
     timing_handle_1.ticks_to_usecs = NULL;
     timing_handle_1.timer_counter_bit_width = 16;
 
-    assert( ! kernel_start(&init_process, init_process_priority, sys_init,
+    assert( ! kernel_start(init_process, init_process_priority, sys_init,
                          wakeup, (Context_switch_handle_t *) &context_switch_handle, &timing_handle_1));
 }

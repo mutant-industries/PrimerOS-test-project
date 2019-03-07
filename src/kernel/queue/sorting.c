@@ -36,7 +36,7 @@ void test_kernel_queue_sorting() {
     last_priority_change = 0;
 
     // set priority needs current process local storage
-    default_kernel_start(0, init, false);
+    default_kernel_start(&init_process, 0, init, false);
 
     action_queue_create(&action_queue_1, true, true, &action_queue_1, test_head_priority_changed_hook);
 

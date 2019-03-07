@@ -91,7 +91,7 @@ void test_kernel_sync_barrier() {
     process_1_mutex_acquired = process_2_mutex_acquired = false;
 
     // --- create and schedule process from current context ---
-    default_kernel_start(__INIT_PROCESS_PRIORITY__, init, false);
+    default_kernel_start(&init_process, __INIT_PROCESS_PRIORITY__, init, false);
 
     assert_not(process_1_started || process_2_started);
 

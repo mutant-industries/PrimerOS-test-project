@@ -11,6 +11,7 @@
 #include <test/common.h>
 #include <driver/vector.h>
 #include <driver/timer.h>
+#include <driver/IO.h>
 
 // -------------------------------------------------------------------------------------
 
@@ -27,6 +28,22 @@ extern Timer_channel_handle_t shared_handle_1;
 extern Timer_channel_handle_t shared_handle_2;
 extern Timer_channel_handle_t overflow_handle;
 extern Timer_channel_handle_t dummy_handle;
+
+// -------------------------------------------------------------------------------------
+
+extern IO_port_driver_t IO_port_driver_1;
+extern IO_port_driver_t IO_port_driver_2;
+extern IO_port_driver_t IO_port_driver_3;
+extern IO_port_driver_t IO_port_driver_4;
+
+extern IO_pin_handle_t IO_pin_handle_1;
+extern IO_pin_handle_t IO_pin_handle_2;
+extern IO_pin_handle_t IO_pin_handle_3;
+extern IO_pin_handle_t IO_pin_handle_4;
+extern IO_pin_handle_t IO_pin_handle_5;
+extern IO_pin_handle_t IO_pin_handle_6;
+extern IO_pin_handle_t IO_pin_handle_7;
+extern IO_pin_handle_t IO_pin_handle_8;
 
 // -------------------------------------------------------------------------------------
 

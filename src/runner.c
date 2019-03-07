@@ -10,7 +10,7 @@ volatile __persistent uint16_t last_passed_test_id = 0;
 
 // -------------------------------------------------------------------------------------
 
-#define TEST_CNT    18
+#define TEST_CNT    19
 
 void (*tests_all[TEST_CNT])(void) = {
     test_driver_wdt_disabled,
@@ -19,6 +19,7 @@ void (*tests_all[TEST_CNT])(void) = {
     test_driver_vector_trigger,
     test_driver_timer_dispose,
     test_driver_timer_multiple,
+    test_driver_io_handler,
     test_driver_stack_pointer,
     test_driver_stack_deferred,
     test_kernel_dispose_chain,
@@ -51,7 +52,7 @@ void test_runner_all() {
 
         WDT_disable();
         default_clock_setup(0, DCOFSEL_0, DIVM__1);
-        IO_unlock();
+        IO_debug_unlock();
         IO_red_led_off();
 
         for (i = 2; i > 0; i--) {

@@ -56,7 +56,7 @@ void test_kernel_event_inheritance() {
     action_1_triggered = action_2_triggered = action_3_triggered = action_4_triggered = false;
 
     // --- create and schedule process from current context ---
-    default_kernel_start(2, init, false);
+    default_kernel_start(&init_process, 2, init, false);
 
     assert(sorted_set_item_priority(&event_1) == 2);
     assert(sorted_set_item_priority(&event_2) == 4);

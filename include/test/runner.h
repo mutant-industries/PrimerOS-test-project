@@ -15,6 +15,7 @@
 #include <test/driver/vector/trigger.h>
 #include <test/driver/timer/dispose.h>
 #include <test/driver/timer/multiple.h>
+#include <test/driver/io/handler.h>
 #include <test/driver/stack/pointer.h>
 #include <test/driver/stack/deferred.h>
 #include <test/kernel/dispose/chain.h>
