@@ -39,6 +39,16 @@ __resource IO_pin_handle_t IO_pin_handle_8;
 
 // -------------------------------------------------------------------------------------
 
+__resource DMA_driver_t DMA_driver;
+__resource DMA_channel_handle_t DMA_handle_1;
+__resource DMA_channel_handle_t DMA_handle_2;
+__resource DMA_channel_handle_t DMA_handle_3;
+__resource DMA_channel_handle_t DMA_handle_4;
+__resource DMA_channel_handle_t DMA_handle_5;
+__resource DMA_channel_handle_t DMA_handle_6;
+
+// -------------------------------------------------------------------------------------
+
 #define __TEST_TIMER_NO__           1
 
 

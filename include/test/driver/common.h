@@ -12,6 +12,7 @@
 #include <driver/vector.h>
 #include <driver/timer.h>
 #include <driver/IO.h>
+#include <driver/DMA.h>
 
 // -------------------------------------------------------------------------------------
 
@@ -44,6 +45,16 @@ extern IO_pin_handle_t IO_pin_handle_5;
 extern IO_pin_handle_t IO_pin_handle_6;
 extern IO_pin_handle_t IO_pin_handle_7;
 extern IO_pin_handle_t IO_pin_handle_8;
+
+// -------------------------------------------------------------------------------------
+
+extern DMA_driver_t DMA_driver;
+extern DMA_channel_handle_t DMA_handle_1;
+extern DMA_channel_handle_t DMA_handle_2;
+extern DMA_channel_handle_t DMA_handle_3;
+extern DMA_channel_handle_t DMA_handle_4;
+extern DMA_channel_handle_t DMA_handle_5;
+extern DMA_channel_handle_t DMA_handle_6;
 
 // -------------------------------------------------------------------------------------
 

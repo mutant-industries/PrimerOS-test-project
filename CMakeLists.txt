@@ -25,6 +25,7 @@ add_executable(PrimerOS-test-project
         src/driver/timer/dispose.c
         src/driver/timer/multiple.c
         src/driver/io/handler.c
+        src/driver/dma/transfer.c
         src/driver/stack/pointer.c
         src/driver/stack/deferred.c
         src/kernel/common.c

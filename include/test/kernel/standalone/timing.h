@@ -10,7 +10,7 @@
 
 /**
  * Timing subsystem functional test, might also be used as main entry point
- * - two periodic signal with nearly the same period
+ * - two periodic signals with nearly the same period
  * - process sleep
  * - blocking API timeout
  * - dynamic timing handle switch between default (16-bit TIMER_A) handle and alternative (10-bit TIMER_B) handle
