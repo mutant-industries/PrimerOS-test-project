@@ -13,6 +13,8 @@
 #include <driver/timer.h>
 #include <driver/IO.h>
 #include <driver/DMA.h>
+#include <driver/eUSCI/UART.h>
+#include <driver/eUSCI/SPI.h>
 
 // -------------------------------------------------------------------------------------
 
@@ -55,6 +57,13 @@ extern DMA_channel_handle_t DMA_handle_3;
 extern DMA_channel_handle_t DMA_handle_4;
 extern DMA_channel_handle_t DMA_handle_5;
 extern DMA_channel_handle_t DMA_handle_6;
+
+// -------------------------------------------------------------------------------------
+
+extern UART_driver_t UART_driver_1;
+extern UART_driver_t UART_driver_2;
+extern SPI_driver_t SPI_driver_1;
+extern SPI_driver_t SPI_driver_2;
 
 // -------------------------------------------------------------------------------------
 

@@ -12,7 +12,9 @@ set(DEFINITIONS
         __${TARGET_MCU}__
         __RESOURCE_MANAGEMENT_ENABLE__
         __WAKEUP_EVENT_ENABLE__
-        __TIMING_CONVERSION_AVOID_HW_MULTIPLICATION__)
+        __TIMING_CONVERSION_AVOID_HW_MULTIPLICATION__
+        __UART_IrDA_CONTROL_ENABLE__
+        __UART_AUTO_BAUDRATE_CONTROL_ENABLE__)
 
 add_executable(PrimerOS-test-project
         src/runner.c
@@ -25,7 +27,10 @@ add_executable(PrimerOS-test-project
         src/driver/timer/dispose.c
         src/driver/timer/multiple.c
         src/driver/io/handler.c
+        src/driver/eusci/uart.c
+        src/driver/eusci/spi.c
         src/driver/dma/transfer.c
+        src/driver/dma/uart.c
         src/driver/stack/pointer.c
         src/driver/stack/deferred.c
         src/kernel/common.c

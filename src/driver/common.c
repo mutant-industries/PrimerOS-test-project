@@ -49,6 +49,13 @@ __resource DMA_channel_handle_t DMA_handle_6;
 
 // -------------------------------------------------------------------------------------
 
+__resource UART_driver_t UART_driver_1;
+__resource UART_driver_t UART_driver_2;
+__resource SPI_driver_t SPI_driver_1;
+__resource SPI_driver_t SPI_driver_2;
+
+// -------------------------------------------------------------------------------------
+
 #define __TEST_TIMER_NO__           1
 
 
