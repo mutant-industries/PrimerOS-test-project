@@ -31,6 +31,7 @@ add_executable(PrimerOS-test-project
         src/driver/eusci/spi.c
         src/driver/dma/transfer.c
         src/driver/dma/uart.c
+        src/driver/crc/consumer.c
         src/driver/stack/pointer.c
         src/driver/stack/deferred.c
         src/kernel/common.c

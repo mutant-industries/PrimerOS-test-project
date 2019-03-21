@@ -20,6 +20,7 @@
 #include <test/driver/eusci/spi.h>
 #include <test/driver/dma/transfer.h>
 #include <test/driver/dma/uart.h>
+#include <test/driver/crc/consumer.h>
 #include <test/driver/stack/pointer.h>
 #include <test/driver/stack/deferred.h>
 #include <test/kernel/dispose/chain.h>

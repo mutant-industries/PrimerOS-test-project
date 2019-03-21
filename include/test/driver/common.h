@@ -15,6 +15,7 @@
 #include <driver/DMA.h>
 #include <driver/eUSCI/UART.h>
 #include <driver/eUSCI/SPI.h>
+#include <driver/CRC.h>
 
 // -------------------------------------------------------------------------------------
 
@@ -64,6 +65,11 @@ extern UART_driver_t UART_driver_1;
 extern UART_driver_t UART_driver_2;
 extern SPI_driver_t SPI_driver_1;
 extern SPI_driver_t SPI_driver_2;
+
+// -------------------------------------------------------------------------------------
+
+extern CRC_driver_t CRC_driver_1;
+extern CRC_driver_t CRC_driver_2;
 
 // -------------------------------------------------------------------------------------
 

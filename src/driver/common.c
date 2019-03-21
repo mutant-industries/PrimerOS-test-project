@@ -56,6 +56,11 @@ __resource SPI_driver_t SPI_driver_2;
 
 // -------------------------------------------------------------------------------------
 
+__resource CRC_driver_t CRC_driver_1;
+__resource CRC_driver_t CRC_driver_2;
+
+// -------------------------------------------------------------------------------------
+
 #define __TEST_TIMER_NO__           1
 
 
