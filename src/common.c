@@ -71,7 +71,7 @@ void default_clock_setup(uint16_t DCO_range_select, uint16_t DCO_frequency_selec
     volatile uint16_t temp;
 
     // -------------------------------------------------------------------------
-    // Set DCO frequency to 1 MHz
+    // Set DCO requested frequency
     uint16_t dcorsel = DCO_range_select;
     uint16_t dcofsel = DCO_frequency_select;
 

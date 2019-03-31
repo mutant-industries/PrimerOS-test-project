@@ -8,9 +8,9 @@
 
 /**
  * Assume there are jumpers connecting following pins:
- *  - P1.2 and P6.1
- *  - P1.3 and P5.2
- *  - P6.3 and P7.1
+ *  - P1.4 and P3.3
+ *  - P1.5 and P4.7
+ *  - P3.6 and P5.7
  */
 void test_driver_io_handler(void);
 

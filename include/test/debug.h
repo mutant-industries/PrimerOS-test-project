@@ -67,9 +67,8 @@
 #define DEBUG_PIN_1                     PIN0
 #define DEBUG_PIN_2                     PIN1
 #define DEBUG_PIN_3                     PIN2
-#define DEBUG_PIN_4                     PIN3
-#define DEBUG_PIN_5                     PIN4
-#define DEBUG_PIN_6                     PIN5
+#define DEBUG_PIN_4                     PIN4
+#define DEBUG_PIN_5                     PIN5
 
 // --------------------------------------------------------------------------------------
 
@@ -86,8 +85,8 @@
 #define IO_debug_init() \
     _PORT_REG_OUT(LED_PORT) &= ~(RED_LED_PIN | GREEN_LED_PIN); \
     _PORT_REG_DIR(LED_PORT) |= (RED_LED_PIN | GREEN_LED_PIN); \
-    _PORT_REG_OUT(DEBUG_PORT) &= ~(DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5 | DEBUG_PIN_6); \
-    _PORT_REG_DIR(DEBUG_PORT) |= DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5 | DEBUG_PIN_6;
+    _PORT_REG_OUT(DEBUG_PORT) &= ~(DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5); \
+    _PORT_REG_DIR(DEBUG_PORT) |= DEBUG_PIN_1 | DEBUG_PIN_2 | DEBUG_PIN_3 | DEBUG_PIN_4 | DEBUG_PIN_5;
 
 #define IO_green_led_on() \
         _PORT_REG_OUT(LED_PORT) |= GREEN_LED_PIN;
@@ -153,15 +152,6 @@
 
 #define IO_debug_pin_5_toggle() \
         _PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_5;
-
-#define IO_debug_pin_6_set() \
-        _PORT_REG_OUT(DEBUG_PORT) |= DEBUG_PIN_6;
-
-#define IO_debug_pin_6_reset() \
-        _PORT_REG_OUT(DEBUG_PORT) &= ~DEBUG_PIN_6;
-
-#define IO_debug_pin_6_toggle() \
-        _PORT_REG_OUT(DEBUG_PORT) ^= DEBUG_PIN_6;
 
 // --------------------------------------------------------------------------------------
 

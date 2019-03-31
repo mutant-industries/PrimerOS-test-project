@@ -42,13 +42,13 @@ __persistent static volatile bool red_led_on = false;
 // -------------------------------------------------------------------------------------
 
 static void led_driver_reinit(IO_port_driver_t *_this) {
-    IO_port_reg_set(_this, DIR, RED_LED_PIN | GREEN_LED_PIN);
+    IO_driver_reg_set(_this, DIR, RED_LED_PIN | GREEN_LED_PIN);
 }
 
 static void button_driver_reinit(IO_port_driver_t *_this) {
-    IO_port_reg_set(_this, OUT, BUTTON_S1_PIN);
-    IO_port_reg_set(_this, REN, BUTTON_S1_PIN);
-    IO_port_reg_set(_this, IES, BUTTON_S1_PIN);
+    IO_driver_reg_set(_this, OUT, BUTTON_S1_PIN);
+    IO_driver_reg_set(_this, REN, BUTTON_S1_PIN);
+    IO_driver_reg_set(_this, IES, BUTTON_S1_PIN);
 }
 
 // -------------------------------------------------------------------------------------
@@ -91,9 +91,9 @@ static void init() {
     // LED port driver init
     IO_port_driver_create(&led_port_driver, LED_PORT, led_driver_reinit);
     // --- test persistent pin output state - green LED should never blink ---
-    IO_port_reg_set(&led_port_driver, OUT, GREEN_LED_PIN);
+    IO_driver_reg_set(&led_port_driver, OUT, GREEN_LED_PIN);
     // red LED off after reset
-    IO_port_reg_reset(&led_port_driver, OUT, RED_LED_PIN);
+    IO_driver_reg_reset(&led_port_driver, OUT, RED_LED_PIN);
 
     red_led_on = false;
 
@@ -175,10 +175,10 @@ static bool button_handler(IO_port_driver_t *driver, uint8_t interrupt_pin) {
     assert(interrupt_pin == BUTTON_S1_PIN);
 
     if (red_led_on) {
-        IO_port_reg_reset(driver, OUT, RED_LED_PIN);
+        IO_driver_reg_set(driver, OUT, RED_LED_PIN);
     }
     else {
-        IO_port_reg_set(driver, OUT, RED_LED_PIN);
+        IO_driver_reg_set(driver, OUT, RED_LED_PIN);
     }
 
     red_led_on = ! red_led_on;
@@ -200,7 +200,7 @@ static signal_t test_process_2_entry_point(Event_t *wakeup) {
             // 500ms, 250ms, 125ms and 62ms
             millisleep(millisecs);
             // red LED blink (4x state toggle)
-            IO_port_reg_toggle(&led_port_driver, OUT, RED_LED_PIN);
+            IO_driver_reg_toggle(&led_port_driver, OUT, RED_LED_PIN);
         }
 
         // --- test device shall enter LPM4.5 when no more timed events are scheduled ---
